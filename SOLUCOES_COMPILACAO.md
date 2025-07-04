@@ -104,7 +104,7 @@ Clientes conectados: 1/4
 
 ### Cliente:
 ```
-🎉 CONECTADO COM SUCESSO! 🎉
+ CONECTADO COM SUCESSO! 
 IP obtido: 192.168.4.2
 Gateway: 192.168.4.1
  Conectado ao AP ESP32_AP com sucesso!
@@ -141,4 +141,4 @@ ESP_LOGI(TAG, " Cliente conectado! Total: %d/%d", connected_clients, AP_MAX_STA_
 // Simplificado para focar no essencial
 ```
 
-## ✨ Ambos os projetos agora compilam sem erros! ✨
+##  Ambos os projetos agora compilam sem erros! 

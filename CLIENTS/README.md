@@ -32,7 +32,7 @@ Este projeto implementa um cliente Wi-Fi usando ESP32 com ESP-IDF que se conecta
 ```c
 // Este é o evento mais importante para confirmar conexão
 if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-    ESP_LOGI(TAG, "🎉 CONECTADO COM SUCESSO! 🎉");
+    ESP_LOGI(TAG, " CONECTADO COM SUCESSO! ");
     ESP_LOGI(TAG, "IP obtido: " IPSTR, IP2STR(&event->ip_info.ip));
     is_connected = true;
 }
@@ -55,7 +55,7 @@ ping_test(); // Ping para 192.168.4.1 (IP do AP)
 ```
 
 ### 5. **Logs Visuais com Emojis**
-- 🎉 Conectado com sucesso
+-  Conectado com sucesso
 -  Status OK
 -  Falha na conexão
 -  Ping OK
@@ -71,7 +71,7 @@ ping_test(); // Ping para 192.168.4.1 (IP do AP)
 
 ### No Monitor Serial:
 ```
-🎉 CONECTADO COM SUCESSO! 🎉
+ CONECTADO COM SUCESSO! 
 IP obtido: 192.168.4.2
 Netmask: 255.255.255.0
 Gateway: 192.168.4.1
@@ -136,6 +136,6 @@ Para conectar em outro AP, modifique em `CLIENTS.c`:
 
 -  **Inicializando**: Sistema iniciando
 -  **Conectando**: Tentando conectar ao AP
-- 🎉 **Conectado**: Obteve IP com sucesso
+-  **Conectado**: Obteve IP com sucesso
 -  **Desconectado**: Perdeu conexão
 -  **Reconectando**: Tentativa automática de reconexão

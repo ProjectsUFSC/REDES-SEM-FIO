@@ -141,7 +141,7 @@ void analyze_ap_behavior(uint8_t reason_code, uint32_t response_time) {
     switch (reason_code) {
         case WIFI_REASON_AUTH_EXPIRE:
             consecutive_timeouts++;
-            ESP_LOGD(TAG, "⏰ Timeout de autenticação detectado");
+            ESP_LOGD(TAG, " Timeout de autenticação detectado");
             break;
             
         case WIFI_REASON_AUTH_FAIL:

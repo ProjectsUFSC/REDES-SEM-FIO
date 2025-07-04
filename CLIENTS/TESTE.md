@@ -31,7 +31,7 @@ idf.py flash monitor
 ```
  Inicializando ESP32 como Cliente Wi-Fi...
 Iniciando conexão ao AP...
-🎉 CONECTADO COM SUCESSO! 🎉
+ CONECTADO COM SUCESSO! 
 IP obtido: 192.168.4.2
 Gateway: 192.168.4.1
  Conectado ao AP ESP32_AP com sucesso!
@@ -67,7 +67,7 @@ Gateway (AP): 192.168.4.1
 - [ ] Logs periódicos "Access Point ativo"
 
 ### No Cliente:
-- [ ] Mensagem "🎉 CONECTADO COM SUCESSO! 🎉"
+- [ ] Mensagem " CONECTADO COM SUCESSO! "
 - [ ] IP obtido na faixa 192.168.4.x
 - [ ] Gateway mostrado como 192.168.4.1
 - [ ] Pings bem-sucedidos para o AP

@@ -26,11 +26,11 @@
 #define TCP_KEEPALIVE_INTERVAL 5
 #define TCP_KEEPALIVE_COUNT 3
 
-#define MAX_DISCONNECTIONS_PER_SECOND 8 // Limite de desconexões por segundo
-#define MAX_AUTH_ATTEMPTS_PER_SECOND 10 // Limite de tentativas de auth por segundo
-#define MAX_PACKETS_PER_CLIENT 50       // Limite de pacotes por cliente por segundo
-#define BLACKLIST_DURATION_MS 300000    // 5 min
-#define MAX_BLACKLIST_ENTRIES 10        // Máximo de MACs na blacklist
+#define MAX_DISCONNECTIONS_PER_SECOND 5
+#define MAX_AUTH_ATTEMPTS_PER_SECOND 8
+#define MAX_PACKETS_PER_CLIENT 30
+#define BLACKLIST_DURATION_MS 300000
+#define MAX_BLACKLIST_ENTRIES 10
 
 typedef struct {
     uint8_t mac[6];
@@ -164,7 +164,6 @@ bool detect_deauth_flood(uint8_t* mac)
     return false;
 }
 
-// Função para detectar flood de autenticação
 bool detect_auth_flood(void)
 {
     /*
@@ -284,7 +283,6 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,int32_t ev
             return;
         }
         
-        // Conexão legítima
         connected_clients++;
         ESP_LOGI(TAG, "\n\n\nCliente conectado! MAC: %02x:%02x:%02x:%02x:%02x:%02x, AID: %d, Total: %d/%d", 
                  event->mac[0], event->mac[1], event->mac[2], 
@@ -379,33 +377,27 @@ void wifi_init_ap(void)
     ESP_LOGI(TAG, "Autenticação: %s", (strlen(AP_PASS) == 0) ? "Aberta" : "WPA2_PSK");
 }
 
-// Função para processar mensagem do cliente TCP
 void process_client_message(int sock, char* rx_buffer, int len, uint8_t* client_mac)
 {
     tcp_clients_served++;
     
-    // Detectar packet flood antes de processar
     if (detect_packet_flood(client_mac)) {
         ESP_LOGI(TAG, "\n\n\nPACKET FLOOD DETECTADO - Bloqueando cliente!");
         add_to_blacklist(client_mac, 3); // 3 = PACKET_FLOOD
         
-        // Enviar resposta de bloqueio
         char block_response[] = "Connection blocked due to flood detection";
         send(sock, block_response, strlen(block_response), 0);
         return;
     }
     
-    // Log da mensagem recebida
     ESP_LOGI(TAG, "\n\n\nMensagem recebida (%d bytes): %s", len, rx_buffer);
     ESP_LOGI(TAG, "Total de mensagens processadas: %d", tcp_clients_served);
     
-    // Preparar resposta
     char response[256];
     snprintf(response, sizeof(response), 
              "Echo from AP: %s | Messages: %d | Clients: %d | Security: ACTIVE",
              rx_buffer, tcp_clients_served, connected_clients);
     
-    // Enviar resposta
     int to_write = strlen(response);
     while (to_write > 0) {
         int written = send(sock, response + (strlen(response) - to_write), to_write, 0);
@@ -419,7 +411,6 @@ void process_client_message(int sock, char* rx_buffer, int len, uint8_t* client_
     ESP_LOGI(TAG, "\n\n\nResposta enviada: %s", response);
 }
 
-// Task do servidor TCP
 static void tcp_server_task(void *pvParameters)
 {
     char addr_str[128];
@@ -480,7 +471,6 @@ static void tcp_server_task(void *pvParameters)
         setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &keepInterval, sizeof(int));
         setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, &keepCount, sizeof(int));
 
-        // Log do cliente conectado
         inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
         ESP_LOGI(TAG, "\n\n\nNova conexao TCP de %s", addr_str);
 
@@ -494,10 +484,18 @@ static void tcp_server_task(void *pvParameters)
         } else {
             rx_buffer[len] = 0; // Null-terminate
             
-            // Simular mapeamento IP->MAC (em implementação real usaria ARP table)
-            uint8_t dummy_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
+            uint8_t client_mac[6];
+            uint32_t client_ip = ((struct sockaddr_in *)&source_addr)->sin_addr.s_addr;
             
-            process_client_message(sock, rx_buffer, len, dummy_mac);
+            client_mac[0] = 0x02; 
+            client_mac[1] = 0x00;
+            client_mac[2] = (client_ip >> 24) & 0xFF;
+            client_mac[3] = (client_ip >> 16) & 0xFF;  
+            client_mac[4] = (client_ip >> 8) & 0xFF;
+            client_mac[5] = client_ip & 0xFF;
+            
+            process_client_message(sock, rx_buffer, len, client_mac);
         }
 
         shutdown(sock, 0);
@@ -510,7 +508,6 @@ CLEAN_UP:
     vTaskDelete(NULL);
 }
 
-// Função para mostrar estatísticas avançadas de segurança
 void show_advanced_security_stats(void)
 {
     ESP_LOGI(TAG, "\n\n\n=== RELATORIO DE SEGURANCA AVANCADO ===");
@@ -522,7 +519,6 @@ void show_advanced_security_stats(void)
     int total_attacks = deauth_floods_detected + auth_floods_detected + packet_floods_detected;
     ESP_LOGI(TAG, "TOTAL DE ATAQUES: %d", total_attacks);
     
-    // Estatísticas da blacklist
     int active_blacklist = 0;
     uint32_t current_time = xTaskGetTickCount() * portTICK_PERIOD_MS;
     
@@ -534,7 +530,6 @@ void show_advanced_security_stats(void)
     
     ESP_LOGI(TAG, "MACs bloqueados: %d/%d", active_blacklist, MAX_BLACKLIST_ENTRIES);
     
-    // Estatísticas de clientes monitorados
     int active_monitors = 0;
     for (int i = 0; i < AP_MAX_STA_CONN; i++) {
         if (client_monitors[i].active) {
@@ -546,7 +541,6 @@ void show_advanced_security_stats(void)
     ESP_LOGI(TAG, "Clientes conectados: %d/%d", connected_clients, AP_MAX_STA_CONN);
     ESP_LOGI(TAG, "Mensagens TCP processadas: %d", tcp_clients_served);
     
-    // Status da proteção
     if (total_attacks == 0) {
         ESP_LOGI(TAG, "\n\n\nSTATUS: REDE SEGURA - Nenhum ataque detectado");
     } else if (total_attacks < 5) {
@@ -562,7 +556,6 @@ void show_advanced_security_stats(void)
 
 void app_main(void)
 {
-    // Inicializar o NVS (Non-Volatile Storage)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
       ESP_ERROR_CHECK(nvs_flash_erase());
@@ -572,23 +565,19 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Inicializando ESP32 como Access Point...");
     
-    // Inicializar o Wi-Fi no modo AP
     wifi_init_ap();
     
-    // Mostrar status inicial
     show_ap_status();
     
-    // Aguardar um pouco para o Wi-Fi estabilizar
     vTaskDelay(pdMS_TO_TICKS(2000));
     
-    // Iniciar tarefa do servidor TCP
     xTaskCreate(tcp_server_task, "tcp_server_task", 4096, NULL, 5, NULL);
     ESP_LOGI(TAG, "\n\n\nServidor TCP iniciado!");
     
-    // Loop principal - o programa continua rodando
     while(1) {
         ESP_LOGI(TAG, "\n\n\nAccess Point ativo - aguardando conexoes...");
         show_ap_status();
-        vTaskDelay(pdMS_TO_TICKS(30000)); // Log a cada 30 segundos
+        show_advanced_security_stats(); // Mostrar relatório de segurança 
+        vTaskDelay(pdMS_TO_TICKS(15000)); // Log a cada 15 segundos para monitorar ataques
     }
 }
