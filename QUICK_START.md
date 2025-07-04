@@ -1,6 +1,6 @@
 # Guia de Início Rápido - WiFi Security Research
 
-## Setup Rápido (5 minutos)
+## Setup Rápido
 
 ### 1. Pré-requisitos
 ```bash
@@ -139,10 +139,7 @@ idf.py -p /dev/ttyUSB0 build flash
 ## Documentação Completa
 
 - **[README.md](README.md)** - Documentação principal
-- **[README_ACADEMICO.md](README_ACADEMICO.md)** - Relatório acadêmico
-- **[DOCUMENTACAO_TECNICA.md](DOCUMENTACAO_TECNICA.md)** - Guia técnico completo
 - **[ModuleName/README_TECNICO.md]** - Documentação específica de cada ataque
 
 ---
 
-**Este guia permite executar o sistema completo em menos de 10 minutos, demonstrando ataques reais e defesas automáticas em ação.**

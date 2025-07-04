@@ -159,15 +159,6 @@ Rejeitado! Possível detecção ativa
 ATAQUE BLOQUEADO - Blacklist confirmada
 ```
 
-## Documentação Detalhada
-
-**[INDICE_DOCUMENTACAO.md](INDICE_DOCUMENTACAO.md)** - Índice completo de toda a documentação
-
-### Documentação Técnica
-- **[DOCUMENTACAO_TECNICA.md](DOCUMENTACAO_TECNICA.md)** - Guia técnico completo com arquitetura do sistema, instruções de execução, troubleshooting e configurações avançadas
-
-- **[QUICK_START.md](QUICK_START.md)** - Guia de início rápido para demonstração em 5 minutos
-
 ### Documentação por Módulo:
 - [`AP/README.md`](AP/README.md) - Sistema de detecção e Access Point inteligente
 - [`CLIENTS/README_TECNICO.md`](CLIENTS/README_TECNICO.md) - Simuladores de clientes legítimos
@@ -239,13 +230,7 @@ ATAQUE BLOQUEADO - Blacklist confirmada
 - PROIBIDO: Fins maliciosos, criminosos ou destrutivos
 - PROIBIDO: Interferência em infraestrutura crítica
 
-### Checklist Ético Obrigatório
-- [ ] Rede própria ou autorização por escrito do proprietário
-- [ ] Ambiente completamente isolado de sistemas de produção
-- [ ] Objetivos educacionais/pesquisa claramente definidos
-- [ ] Sem exposição ou captura de dados sensíveis reais
-- [ ] Resultados utilizados exclusivamente para melhorar segurança
-- [ ] Conformidade com leis locais de telecomunicações
+
 
 ### Aspectos Legais
 - **Regulamentações**: Respeitar leis locais de telecomunicações e cibersegurança
@@ -281,7 +266,7 @@ ESP_LOGI(TAG, "CPU usage: %d%%", get_cpu_usage_percent());
 
 ## Desenvolvimentos Futuros
 
-### Melhorias Planejadas
+### Melhorias Recomendadas
 - **Machine Learning**: IDS inteligente com detecção adaptativa
 - **Dashboard Web**: Interface de monitoramento em tempo real
 - **API RESTful**: Integração com sistemas externos de segurança
@@ -289,46 +274,19 @@ ESP_LOGI(TAG, "CPU usage: %d%%", get_cpu_usage_percent());
 - **Multi-AP Mesh**: Sistema distribuído de detecção
 - **Mobile App**: Controle e monitoramento via smartphone
 
-### Áreas de Pesquisa
+### Áreas de Pesquisa Relacionadas ao Trabalho
 - **IoT Security**: Segurança para dispositivos IoT embarcados
 - **5G/6G Wireless**: Adaptação para redes de próxima geração
 - **AI-driven Attacks**: Ataques baseados em inteligência artificial
 - **Quantum-resistant Crypto**: Preparação para era pós-quântica
 - **Edge Computing**: Processamento distribuído de segurança
 
-### Roadmap de Desenvolvimento
-```
-Versão 1.0 (Atual): Ataques básicos + IDS simples
-Versão 2.0: ML integration + Web dashboard
-Versão 3.0: Enterprise features + API
-Versão 4.0: Multi-AP coordination + Cloud integration
-```
+## Licença e Direitos
 
-## Contribuições e Suporte
+### Autores
+- **Desenvolvedores**: Augusto Daleffe, João Pavan.
 
-### Como Contribuir
-1. **Fork** o repositório
-2. **Crie uma branch** para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. **Commit** suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. **Push** para a branch (`git push origin feature/nova-funcionalidade`)
-5. **Abra um Pull Request** com descrição detalhada
-
-### Reportar Problemas
-- Utilize o sistema de **Issues** do repositório
-- Inclua logs completos e configuração usada
-- Descreva passos para reproduzir o problema
-- Especifique hardware e versão do ESP-IDF
-
-### Suporte Técnico
-Para dúvidas técnicas, consulte em ordem:
-1. **[DOCUMENTACAO_TECNICA.md](DOCUMENTACAO_TECNICA.md)** - Troubleshooting completo
-2. **Issues** existentes no repositório
-3. **ESP-IDF Documentation** oficial
-4. **Logs de debug** com `ESP_LOG_DEBUG` habilitado
-
-## 📄 Licença e Direitos
-
-###  Licença de Uso
+### Licença de Uso
 Este projeto é distribuído sob **Licença Educacional**:
 -  **Uso acadêmico**: Permitido com atribuição
 -  **Pesquisa**: Permitido com citação adequada
@@ -336,13 +294,12 @@ Este projeto é distribuído sob **Licença Educacional**:
 -  **Uso comercial**: Requer autorização expressa dos autores
 -  **Distribuição modificada**: Sem autorização dos autores
 
-### 🏛️ Instituição Acadêmica
-- **Desenvolvido para**: Pesquisa em Cibersegurança
-- **Objetivo**: Educação e conscientização sobre segurança WiFi
-- **Orientação**: Prof. [Nome do Orientador]
-- **Instituição**: [Nome da Universidade/Instituto]
+### Instituição Acadêmica
+- **Desenvolvido para**: Matéria de Redes Sem Fio UFSC-Araranguá 2025.1
+- **Objetivo**: Entendimento de como diferentes ataques impactam o desempenho da rede Wi-Fi e como mitigá-los
+- **Instituição**: Universidade Federal de Santa Catarina - Campus Araranguá
 
-## � Recursos e Referências
+## Recursos e Referências
 
 ###  Documentação Técnica
 - **[ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf/en/latest/)**
@@ -371,9 +328,3 @@ Este projeto é destinado **EXCLUSIVAMENTE** para fins educacionais, pesquisa ac
 - **Comprometer segurança** de terceiros
 
 **OS AUTORES NÃO SE RESPONSABILIZAM** pelo uso inadequado, ilegal ou malicioso deste código. A utilização implica **TOTAL RESPONSABILIDADE** do usuário em garantir conformidade ética e legal.
-
----
-
-**Para documentação técnica completa e relatório acadêmico**: consulte [`DOCUMENTACAO_TECNICA.md`](DOCUMENTACAO_TECNICA.md) e [`README_ACADEMICO.md`](README_ACADEMICO.md)
-
-**Este projeto contribui para o avanço da pesquisa em cibersegurança através de experimentação controlada e responsável, promovendo o desenvolvimento de sistemas WiFi mais seguros.**
