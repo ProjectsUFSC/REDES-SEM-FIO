@@ -22,7 +22,7 @@
 
 // Configurações do ataque de flood
 #define FLOOD_INTERVAL_MS 5           // Intervalo MUITO pequeno para gerar múltiplos pacotes por segundo
-#define PACKETS_PER_BURST 20          // MAIS pacotes TCP por rajada
+#define PACKETS_PER_BURST 200          // MAIS pacotes TCP por rajada
 #define MAX_FLOOD_PACKETS 5000        // Máximo de pacotes para enviar
 #define LARGE_PACKET_SIZE 1024        // Tamanho de pacotes grandes
 #define TCP_CONNECTIONS_SIMULTANEOUS 10 // MAIS conexões TCP simultâneas
