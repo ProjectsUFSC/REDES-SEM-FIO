@@ -26,7 +26,7 @@ Este projeto implementa um cliente Wi-Fi usando ESP32 com ESP-IDF que se conecta
 - `WIFI_EVENT_STA_DISCONNECTED`: Gerencia reconexão automática
 - `IP_EVENT_STA_GOT_IP`: **PRINCIPAL** - Confirma que obteve IP do AP
 
-## ✅ Métodos de Verificação de Conexão
+##  Métodos de Verificação de Conexão
 
 ### 1. **Event `IP_EVENT_STA_GOT_IP` (OBRIGATÓRIO)**
 ```c
@@ -56,11 +56,11 @@ ping_test(); // Ping para 192.168.4.1 (IP do AP)
 
 ### 5. **Logs Visuais com Emojis**
 - 🎉 Conectado com sucesso
-- ✅ Status OK
-- ❌ Falha na conexão
-- 📡 Ping OK
-- 🔍 Testando conectividade
-- 📊 Estatísticas de ping
+-  Status OK
+-  Falha na conexão
+-  Ping OK
+-  Testando conectividade
+-  Estatísticas de ping
 
 ### 6. **Monitoramento Contínuo**
 - Task que verifica conexão a cada 30 segundos
@@ -75,7 +75,7 @@ ping_test(); // Ping para 192.168.4.1 (IP do AP)
 IP obtido: 192.168.4.2
 Netmask: 255.255.255.0
 Gateway: 192.168.4.1
-✅ Conectado ao AP ESP32_AP com sucesso!
+ Conectado ao AP ESP32_AP com sucesso!
 ```
 
 ### No AP (Access Point):
@@ -95,11 +95,11 @@ Gateway (AP): 192.168.4.1
 
 ### Teste de Conectividade:
 ```
-🔍 Testando conectividade com ping para o AP...
-📡 Ping OK - seq=1, ttl=64, time=5ms
-📡 Ping OK - seq=2, ttl=64, time=3ms
-📡 Ping OK - seq=3, ttl=64, time=4ms
-📊 Ping finalizado: 3/3 pacotes, tempo total: 3000ms
+ Testando conectividade com ping para o AP...
+ Ping OK - seq=1, ttl=64, time=5ms
+ Ping OK - seq=2, ttl=64, time=3ms
+ Ping OK - seq=3, ttl=64, time=4ms
+ Ping finalizado: 3/3 pacotes, tempo total: 3000ms
 ```
 
 ## Como Compilar e Executar
@@ -134,8 +134,8 @@ Para conectar em outro AP, modifique em `CLIENTS.c`:
 
 ## Estados de Conexão
 
-- 🚀 **Inicializando**: Sistema iniciando
-- 🔄 **Conectando**: Tentando conectar ao AP
+-  **Inicializando**: Sistema iniciando
+-  **Conectando**: Tentando conectar ao AP
 - 🎉 **Conectado**: Obteve IP com sucesso
-- ❌ **Desconectado**: Perdeu conexão
-- 🔄 **Reconectando**: Tentativa automática de reconexão
+-  **Desconectado**: Perdeu conexão
+-  **Reconectando**: Tentativa automática de reconexão

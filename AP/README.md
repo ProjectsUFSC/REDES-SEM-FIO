@@ -4,9 +4,9 @@
 
 Este módulo implementa um **Access Point WiFi com sistema de detecção e mitigação de ataques** baseado em ESP32. O AP possui capacidades de IDS (Intrusion Detection System) em tempo real e mecanismos automatizados de resposta a ameaças.
 
-## 🏗️ Arquitetura do Sistema
+##  Arquitetura do Sistema
 
-### 📡 Configuração de Rede
+###  Configuração de Rede
 ```c
 // Configurações do AP
 #define AP_SSID "ESP32_AP"
@@ -18,7 +18,7 @@ Este módulo implementa um **Access Point WiFi com sistema de detecção e mitig
 #define AP_NETMASK "255.255.255.0"
 ```
 
-### 🔍 Sistema de Detecção (IDS)
+###  Sistema de Detecção (IDS)
 O AP implementa um IDS baseado em **análise comportamental** e **detecção de anomalias**:
 
 #### **Métricas Monitoradas**
@@ -151,7 +151,7 @@ W (15000) AP: Performance degradada - Latência alta detectada
 
 ## Uso Responsável
 
-⚠️ **AVISO IMPORTANTE**: Este AP vulnerável deve ser usado APENAS em ambientes controlados e isolados. Nunca ativar em redes de produção ou espaços públicos.
+ **AVISO IMPORTANTE**: Este AP vulnerável deve ser usado APENAS em ambientes controlados e isolados. Nunca ativar em redes de produção ou espaços públicos.
 - Logs de conexão e desconexão de clientes
 
 ## Configuração

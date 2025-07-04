@@ -29,12 +29,12 @@ idf.py flash monitor
 
 **Saída esperada do Cliente:**
 ```
-🚀 Inicializando ESP32 como Cliente Wi-Fi...
+ Inicializando ESP32 como Cliente Wi-Fi...
 Iniciando conexão ao AP...
 🎉 CONECTADO COM SUCESSO! 🎉
 IP obtido: 192.168.4.2
 Gateway: 192.168.4.1
-✅ Conectado ao AP ESP32_AP com sucesso!
+ Conectado ao AP ESP32_AP com sucesso!
 ```
 
 ### 3. Verificações no AP
@@ -53,13 +53,13 @@ Canal: 1
 IP do Cliente: 192.168.4.2
 Gateway (AP): 192.168.4.1
 
-🔍 Testando conectividade com ping para o AP...
-📡 Ping OK - seq=1, ttl=64, time=5ms
-📡 Ping OK - seq=2, ttl=64, time=3ms
-📡 Ping OK - seq=3, ttl=64, time=4ms
+ Testando conectividade com ping para o AP...
+ Ping OK - seq=1, ttl=64, time=5ms
+ Ping OK - seq=2, ttl=64, time=3ms
+ Ping OK - seq=3, ttl=64, time=4ms
 ```
 
-## ✅ Como Confirmar que Está Funcionando
+##  Como Confirmar que Está Funcionando
 
 ### No Access Point:
 - [ ] Mensagem "Access Point iniciado!"
@@ -71,7 +71,7 @@ Gateway (AP): 192.168.4.1
 - [ ] IP obtido na faixa 192.168.4.x
 - [ ] Gateway mostrado como 192.168.4.1
 - [ ] Pings bem-sucedidos para o AP
-- [ ] Status "Conectado: SIM ✅"
+- [ ] Status "Conectado: SIM "
 
 ### Testes Adicionais:
 
@@ -95,7 +95,7 @@ Gateway (AP): 192.168.4.1
 - IPs dos clientes: `192.168.4.2`, `192.168.4.3`, etc.
 - Máscara: `255.255.255.0`
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Cliente não conecta:
 1. Verificar se AP está rodando
@@ -118,7 +118,7 @@ Gateway (AP): 192.168.4.1
 2. Verificar gateway correto
 3. Verificar se AP responde
 
-## 📊 Métricas de Sucesso
+##  Métricas de Sucesso
 
 - **Tempo de conexão**: < 10 segundos
 - **RSSI**: > -70 dBm para boa conexão
@@ -126,7 +126,7 @@ Gateway (AP): 192.168.4.1
 - **Taxa de sucesso**: 100% em ambiente controlado
 - **Reconexão**: < 5 segundos após falha
 
-## 🎯 Casos de Teste
+##  Casos de Teste
 
 ### Teste 1: Conexão Básica
 - [ ] AP inicia corretamente

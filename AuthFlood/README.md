@@ -48,14 +48,14 @@ AUTH FLOOD DETECTADO!
 MAC bloqueado por AUTH_FLOOD (60 seg)
 ```
 
-## 🛠️ Como Usar
+##  Como Usar
 
-### 📋 Pré-requisitos
+###  Pré-requisitos
 - ESP-IDF instalado e configurado
 - ESP32 disponível
 - AP alvo rodando (projeto `/AP`)
 
-### 🔧 Configuração
+###  Configuração
 1. **Ajustar configurações** em `AuthFlood.c`:
    ```c
    #define TARGET_SSID "ESP32_AP"        // SSID do AP alvo
@@ -65,114 +65,114 @@ MAC bloqueado por AUTH_FLOOD (60 seg)
    #define AUTH_FLOOD_INTERVAL_MS 100    // Agressividade do ataque
    ```
 
-### 🚀 Compilação e Flash
+###  Compilação e Flash
 ```bash
 cd AuthFlood
 idf.py build
 idf.py flash monitor
 ```
 
-## 📊 Logs Esperados
+##  Logs Esperados
 
-### 🚀 Iniciando o Ataque
+###  Iniciando o Ataque
 ```
-🚀 === INICIANDO AUTH FLOOD ATTACK ===
-🎯 Alvo: ESP32_AP
-🔐 Estratégia: Senhas falsas + MACs aleatórios
-⚡ Intervalo: 100ms (10 tentativas/segundo)
-🎲 Randomização de MAC: ATIVADA
-```
-
-### 💥 Durante o Ataque
-```
-💥 AUTH #1 - MAC: aa:bb:cc:dd:ee:01, Senha: wrongpass123
-❌ Falha de autenticação (esperado)
-💥 AUTH #2 - MAC: aa:bb:cc:dd:ee:02, Senha: admin123
-❌ Falha de autenticação (esperado)
-💥 AUTH #3 - MAC: aa:bb:cc:dd:ee:03, Senha: password
-❌ Falha de autenticação (esperado)
-⚡ Taxa atual: 9.8 tentativas/segundo
+ === INICIANDO AUTH FLOOD ATTACK ===
+ Alvo: ESP32_AP
+ Estratégia: Senhas falsas + MACs aleatórios
+ Intervalo: 100ms (10 tentativas/segundo)
+ Randomização de MAC: ATIVADA
 ```
 
-### 🚫 Detectado e Bloqueado
+###  Durante o Ataque
 ```
-🚨 DETECÇÃO ATIVADA! AP bloqueou nossas tentativas
-❌ Erro: Conexão rejeitada
-🔄 Tentando com novo MAC aleatório...
-❌ Todos os MACs parecem estar bloqueados
-⏹️ ATAQUE MITIGADO PELO AP
-```
-
-### 📈 Estatísticas Finais
-```
-📊 === ESTATÍSTICAS AUTH FLOOD ===
-🔐 Total de tentativas: 167
-❌ Falhas de autenticação: 167 (100%)
-✅ Autenticações bem-sucedidas: 0
-⚡ Taxa média: 8.3 tentativas/segundo
-🎲 MACs únicos utilizados: 45
-⏱️ Duração antes do bloqueio: 20 segundos
-🎯 Objetivo alcançado: Sistema de detecção ativado
+ AUTH #1 - MAC: aa:bb:cc:dd:ee:01, Senha: wrongpass123
+ Falha de autenticação (esperado)
+ AUTH #2 - MAC: aa:bb:cc:dd:ee:02, Senha: admin123
+ Falha de autenticação (esperado)
+ AUTH #3 - MAC: aa:bb:cc:dd:ee:03, Senha: password
+ Falha de autenticação (esperado)
+ Taxa atual: 9.8 tentativas/segundo
 ```
 
-## 🛡️ Contramedidas do AP
+###  Detectado e Bloqueado
+```
+ DETECÇÃO ATIVADA! AP bloqueou nossas tentativas
+ Erro: Conexão rejeitada
+ Tentando com novo MAC aleatório...
+ Todos os MACs parecem estar bloqueados
+ ATAQUE MITIGADO PELO AP
+```
 
-### 🔍 Sistema de Detecção
+###  Estatísticas Finais
+```
+ === ESTATÍSTICAS AUTH FLOOD ===
+ Total de tentativas: 167
+ Falhas de autenticação: 167 (100%)
+ Autenticações bem-sucedidas: 0
+Taxa média: 8.3 tentativas/segundo
+MACs únicos utilizados: 45
+ Duração antes do bloqueio: 20 segundos
+ Objetivo alcançado: Sistema de detecção ativado
+```
+
+##  Contramedidas do AP
+
+###  Sistema de Detecção
 1. **Rate Limiting**: Monitora tentativas de auth por segundo
 2. **Failure Analysis**: Analisa taxa de falhas de autenticação
 3. **Blacklist Inteligente**: Bloqueia baseado em padrões
 4. **Adaptive Thresholds**: Ajusta limites dinamicamente
 
-### ⚙️ Configurações de Defesa
+###  Configurações de Defesa
 ```c
 #define MAX_AUTH_ATTEMPTS_PER_SECOND 10   // 10 tentativas/segundo máximo
 #define AUTH_FAILURE_THRESHOLD 5          // 5 falhas consecutivas
 #define BLACKLIST_DURATION_MS 60000       // 60 segundos de bloqueio
 ```
 
-### 🛡️ Resposta Automática
+###  Resposta Automática
 ```
-📊 Análise de autenticação:
+ Análise de autenticação:
   - Tentativas/segundo: 15 (limite: 10)
   - Taxa de falhas: 100% (suspeito)
   - Padrão detectado: AUTH_FLOOD
 
-🚨 CONTRAMEDIDAS ATIVADAS:
-  1. ✅ MAC adicionado à blacklist
-  2. ✅ Tentativas futuras bloqueadas
-  3. ✅ Rate limiting aplicado
-  4. ✅ Log de segurança gerado
+ CONTRAMEDIDAS ATIVADAS:
+  1.  MAC adicionado à blacklist
+  2.  Tentativas futuras bloqueadas
+  3.  Rate limiting aplicado
+  4.  Log de segurança gerado
 ```
 
-## 🎓 Valor Educacional
+##  Valor Educacional
 
-### 📚 Conceitos Demonstrados
+###  Conceitos Demonstrados
 - **Ataques de Autenticação**: Exploração de sistemas de login
 - **Brute Force**: Tentativas de quebra por força bruta
 - **Rate Limiting**: Proteção contra ataques automatizados
 - **Behavioral Analysis**: Detecção baseada em padrões
 
-### 🔍 Análise de Segurança
+###  Análise de Segurança
 - **Facilidade**: Relativamente simples de implementar
 - **Detectabilidade**: Padrões são facilmente identificáveis
 - **Impacto**: Pode afetar disponibilidade do serviço
 - **Contramedidas**: Rate limiting e blacklist são efetivos
 
-### 💡 Variações do Ataque
+###  Variações do Ataque
 1. **Dictionary Attack**: Lista de senhas comuns
 2. **Credential Stuffing**: Reutilização de credenciais vazadas
 3. **Password Spraying**: Poucos passwords, muitos usuários
 4. **Hybrid Attack**: Combinação de técnicas
 
-## 🌐 Ataques Similares no Mundo Real
+##  Ataques Similares no Mundo Real
 
-### 💻 Ferramentas Profissionais
+###  Ferramentas Profissionais
 - **Hydra**: Brute force para múltiplos protocolos
 - **John the Ripper**: Quebra de passwords
 - **Hashcat**: GPU-accelerated password cracking
 - **Medusa**: Parallel login brute-forcer
 
-### 🔧 Comando Exemplo
+###  Comando Exemplo
 ```bash
 # Hydra SSH brute force (apenas para testes autorizados)
 hydra -l admin -P passwords.txt ssh://192.168.1.100
@@ -181,15 +181,15 @@ hydra -l admin -P passwords.txt ssh://192.168.1.100
 aircrack-ng -w wordlist.txt capture.cap
 ```
 
-## 🛡️ Proteções Profissionais
+##  Proteções Profissionais
 
-### 🔐 Autenticação Robusta
+###  Autenticação Robusta
 - **Multi-Factor Authentication (MFA)**: Segundo fator obrigatório
 - **Account Lockout**: Bloqueio após X tentativas
 - **Progressive Delays**: Aumenta delay a cada falha
 - **CAPTCHA**: Verificação humana após tentativas
 
-### 📊 Monitoramento Avançado
+###  Monitoramento Avançado
 ```python
 # Exemplo de detecção avançada (conceitual)
 def detect_auth_flood(client_ip, attempts_per_minute, failure_rate):
@@ -200,21 +200,21 @@ def detect_auth_flood(client_ip, attempts_per_minute, failure_rate):
     return False
 ```
 
-### 🏗️ Arquitetura Defensiva
+###  Arquitetura Defensiva
 - **Authentication Servers**: Servidores dedicados
 - **Load Balancing**: Distribuição de carga de auth
 - **Honeypots**: Detectar e estudar atacantes
 - **Threat Intelligence**: Blacklists externos
 
-## 🔐 Boas Práticas de Senha
+##  Boas Práticas de Senha
 
-### ✅ Para Administradores
+###  Para Administradores
 - **Senhas complexas**: Mínimo 12 caracteres
 - **Rotação regular**: Mudança periódica
 - **Senhas únicas**: Não reutilizar credenciais
 - **Password managers**: Uso de gerenciadores
 
-### 🔧 Configurações Seguras
+###  Configurações Seguras
 ```c
 // Configurações de segurança recomendadas
 #define MIN_PASSWORD_LENGTH 12
@@ -223,22 +223,22 @@ def detect_auth_flood(client_ip, attempts_per_minute, failure_rate):
 #define REQUIRE_COMPLEX_PASSWORDS true
 ```
 
-## ⚠️ Aspectos Legais e Éticos
+##  Aspectos Legais e Éticos
 
-### 🚨 Considerações Importantes
+###  Considerações Importantes
 - **Testes autorizados**: Apenas em infraestrutura própria
 - **Compliance**: Respeitar regulamentações (LGPD, GDPR)
 - **Disclosure**: Reportar vulnerabilidades encontradas
 - **Documentação**: Manter logs de atividades de teste
 
-### 📋 Checklist Ético
+###  Checklist Ético
 - [ ] Autorização por escrito do proprietário
 - [ ] Ambiente isolado de produção
 - [ ] Objetivos educacionais claramente definidos
 - [ ] Sem intenção maliciosa
 - [ ] Resultados usados para melhorar segurança
 
-## ⚠️ Aviso Legal
+##  Aviso Legal
 
 Este código é destinado **exclusivamente para fins educacionais** e testes autorizados.
 
@@ -254,7 +254,7 @@ O uso inadequado pode violar:
 - Termos de serviço de sistemas
 - Códigos de ética profissional
 
-## 🔗 Projetos Relacionados
+##  Projetos Relacionados
 
 - **`/AP`** - Access Point com detecção de auth flood
 - **`/CLIENTS`** - Clientes legítimos para comparação
@@ -264,4 +264,4 @@ O uso inadequado pode violar:
 
 ---
 
-📖 **Documentação completa**: `SISTEMA_SEGURANCA_WIFI.md`
+ **Documentação completa**: `SISTEMA_SEGURANCA_WIFI.md`

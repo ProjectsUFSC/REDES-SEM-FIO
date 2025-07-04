@@ -1,12 +1,12 @@
-# 📚 Análise Acadêmica de Ataques WiFi e Sistemas de Defesa
+#  Análise Acadêmica de Ataques WiFi e Sistemas de Defesa
 
-## 🎯 Resumo Executivo
+##  Resumo Executivo
 
 Este projeto implementa um **ambiente de pesquisa controlado** para estudo de vulnerabilidades em redes WiFi IEEE 802.11, desenvolvendo tanto ataques comuns quanto sistemas de defesa automatizada. O sistema utiliza microcontroladores ESP32 para simular cenários reais de segurança wireless, proporcionando uma plataforma educacional para compreensão de ameaças cibernéticas e desenvolvimento de contramedidas.
 
-## 📖 Fundamentação Teórica
+##  Fundamentação Teórica
 
-### 🔬 Protocolos IEEE 802.11 e Vulnerabilidades
+###  Protocolos IEEE 802.11 e Vulnerabilidades
 
 O protocolo IEEE 802.11 possui limitações inerentes que permitem diversos tipos de ataques:
 
@@ -31,7 +31,7 @@ AP → Cliente: Association Response
 - **DHCP**: Suscetível a ataques de pool exhaustion
 - **DNS**: Possibilidade de spoofing e redirecionamento
 
-### 🛡️ Sistemas de Detecção de Intrusão (IDS)
+###  Sistemas de Detecção de Intrusão (IDS)
 
 O projeto implementa um **IDS baseado em anomalias** com as seguintes características:
 
@@ -62,7 +62,7 @@ bool detect_attack(client_metrics_t *client) {
 }
 ```
 
-## 🔥 Taxonomia de Ataques Implementados
+##  Taxonomia de Ataques Implementados
 
 ### **1. Connection Flood Attack**
 **Classificação**: DoS (Denial of Service) - Layer 2
@@ -157,7 +157,7 @@ Compromised:    Cliente → Atacante → Gateway → Internet
 - **Tempo médio para detecção**: 2-5 minutos
 - **Efetividade**: Maior contra usuários não técnicos
 
-## 📊 Sistema de Defesa Implementado
+##  Sistema de Defesa Implementado
 
 ### **Arquitetura de Segurança**
 ```
@@ -189,7 +189,7 @@ struct defense_metrics {
 - **Critérios**: Baseado no tipo de ataque detectado
 - **Auto-expiração**: Limpeza automática para otimização
 
-## 🔍 Metodologia de Pesquisa
+##  Metodologia de Pesquisa
 
 ### **Ambiente Experimental**
 - **Hardware**: ESP32-WROOM-32 (240MHz dual-core)
@@ -235,7 +235,7 @@ def run_attack_test(attack_type, duration=60, intensity="medium"):
     return compile_report(baseline, impact, defense, recovery)
 ```
 
-## 📈 Resultados e Análise
+##  Resultados e Análise
 
 ### **Efetividade dos Ataques (sem defesa)**
 | Tipo de Ataque | Taxa de Sucesso | Tempo Médio | Impacto |
@@ -277,7 +277,7 @@ With Defense Active:
 └── Throughput: 6-9 Mbps
 ```
 
-## 🎓 Valor Educacional e Aplicações
+## Valor Educacional e Aplicações
 
 ### **Conceitos de Segurança Demonstrados**
 1. **Vulnerabilidades de Protocolo**: Limitações inerentes do IEEE 802.11
@@ -300,7 +300,7 @@ With Defense Active:
 4. **Pesquisa Acadêmica**: Novos protocolos e defesas
 5. **Educação em Cibersegurança**: Material didático prático
 
-## 🔬 Limitações e Trabalhos Futuros
+##  Limitações e Trabalhos Futuros
 
 ### **Limitações Atuais**
 1. **Hardware**: Limitações de processamento e memória do ESP32
@@ -338,7 +338,7 @@ roadmap = {
 }
 ```
 
-## ⚖️ Considerações Éticas e Legais
+##  Considerações Éticas e Legais
 
 ### **Uso Responsável**
 Este projeto deve ser utilizado exclusivamente para:
@@ -362,7 +362,7 @@ Este projeto deve ser utilizado exclusivamente para:
 5. SEMPRE usar conhecimento para melhorar segurança
 ```
 
-## 📚 Referências Bibliográficas
+##  Referências Bibliográficas
 
 1. IEEE 802.11-2020: "IEEE Standard for Information Technology"
 2. Vanhoef, M. & Piessens, F. (2017): "Key Reinstallation Attacks: Forcing Nonce Reuse in WPA2"
@@ -370,7 +370,7 @@ Este projeto deve ser utilizado exclusivamente para:
 4. Cache, J. & Wright, J. (2006): "Hacking Exposed Wireless: Wireless Security Secrets & Solutions"
 5. Gast, M. (2005): "802.11 Wireless Networks: The Definitive Guide"
 
-## 🔗 Recursos Adicionais
+##  Recursos Adicionais
 
 - **ESP-IDF Documentation**: https://docs.espressif.com/projects/esp-idf/
 - **WiFi Security Research**: https://www.krackattacks.com/
@@ -379,7 +379,7 @@ Este projeto deve ser utilizado exclusivamente para:
 
 ---
 
-📊 **Este documento serve como base acadêmica para compreensão e desenvolvimento responsável de sistemas de segurança wireless, contribuindo para o avanço do conhecimento em cibersegurança através de pesquisa controlada e ética.**
+ **Este documento serve como base acadêmica para compreensão e desenvolvimento responsável de sistemas de segurança wireless, contribuindo para o avanço do conhecimento em cibersegurança através de pesquisa controlada e ética.**
 - **1x Atacante**: ESP32 executando os diferentes tipos de ataque
 
 ### 3.2 Análise Detalhada dos Ataques

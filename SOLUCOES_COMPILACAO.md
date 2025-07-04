@@ -61,17 +61,17 @@ idf_component_register(SRCS "CLIENTS.c"
                     REQUIRES esp_wifi esp_event nvs_flash)
 ```
 
-## 📊 Status Atual dos Arquivos
+##  Status Atual dos Arquivos
 
 | Arquivo | Status | Observações |
 |---------|--------|-------------|
-| `AP/main/AP.c` | ✅ **OK** | Sem erros, logs simplificados |
-| `CLIENTS/main/CLIENTS.c` | ✅ **OK** | Callbacks corrigidos |
-| `CLIENTS/main/CLIENTS_SIMPLE.c` | ✅ **OK** | Versão sem ping |
-| `AP/sdkconfig.defaults` | ✅ **OK** | Configurações do AP |
-| `CLIENTS/sdkconfig.defaults` | ✅ **OK** | Configurações do cliente |
+| `AP/main/AP.c` | **OK** | Sem erros, logs simplificados |
+| `CLIENTS/main/CLIENTS.c` |  **OK** | Callbacks corrigidos |
+| `CLIENTS/main/CLIENTS_SIMPLE.c` |  **OK** | Versão sem ping |
+| `AP/sdkconfig.defaults` |  **OK** | Configurações do AP |
+| `CLIENTS/sdkconfig.defaults` |  **OK** | Configurações do cliente |
 
-## 🚀 Teste Rápido
+##  Teste Rápido
 
 ### 1. Compilar AP:
 ```bash
@@ -96,7 +96,7 @@ cd CLIENTS && idf.py flash monitor
 
 ### AP:
 ```
-✅ Cliente conectado! Total: 1/4
+ Cliente conectado! Total: 1/4
 === STATUS DO ACCESS POINT ===
 SSID: ESP32_AP
 Clientes conectados: 1/4
@@ -107,10 +107,10 @@ Clientes conectados: 1/4
 🎉 CONECTADO COM SUCESSO! 🎉
 IP obtido: 192.168.4.2
 Gateway: 192.168.4.1
-✅ Conectado ao AP ESP32_AP com sucesso!
+ Conectado ao AP ESP32_AP com sucesso!
 ```
 
-## 🔍 Principais Correções Implementadas
+##  Principais Correções Implementadas
 
 ### 1. Callbacks do Ping (CLIENTS.c):
 ```c
@@ -132,7 +132,7 @@ esp_ping_callbacks_t cbs = {
 ESP_LOGI(TAG, "Cliente conectado - MAC: " MACSTR, MAC2STR(event->mac));
 
 // Depois (CORRETO):
-ESP_LOGI(TAG, "✅ Cliente conectado! Total: %d/%d", connected_clients, AP_MAX_STA_CONN);
+ESP_LOGI(TAG, " Cliente conectado! Total: %d/%d", connected_clients, AP_MAX_STA_CONN);
 ```
 
 ### 3. Verificação de Status (CLIENTS.c):

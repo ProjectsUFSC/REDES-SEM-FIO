@@ -130,9 +130,9 @@ void wifi_init_sta(void)
             portMAX_DELAY);
 
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "✅ Conectado ao AP %s com sucesso!", AP_SSID);
+        ESP_LOGI(TAG, " Conectado ao AP %s com sucesso!", AP_SSID);
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGE(TAG, "❌ Falha na conexão ao AP %s", AP_SSID);
+        ESP_LOGE(TAG, " Falha na conexão ao AP %s", AP_SSID);
     } else {
         ESP_LOGE(TAG, "❓ Evento inesperado");
     }
@@ -142,44 +142,44 @@ void wifi_init_sta(void)
 void show_detailed_stats(void)
 {
     if (!is_connected) {
-        ESP_LOGW(TAG, "Não conectado - estatísticas não disponíveis");
+        ESP_LOGI(TAG, "Não conectado - estatísticas não disponíveis");
         return;
     }
 
-    ESP_LOGI(TAG, "📊 === ESTATÍSTICAS DETALHADAS ===");
+    ESP_LOGI(TAG, " === ESTATÍSTICAS DETALHADAS ===");
     
     // Informações do AP
     wifi_ap_record_t ap_info;
     if (esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK) {
-        ESP_LOGI(TAG, "📡 SSID: %s", ap_info.ssid);
-        ESP_LOGI(TAG, "📡 RSSI: %d dBm", ap_info.rssi);
-        ESP_LOGI(TAG, "📡 Canal: %d", ap_info.primary);
+        ESP_LOGI(TAG, " SSID: %s", ap_info.ssid);
+        ESP_LOGI(TAG, " RSSI: %d dBm", ap_info.rssi);
+        ESP_LOGI(TAG, " Canal: %d", ap_info.primary);
         
         // Interpretar qualidade do sinal
         if (ap_info.rssi > -50) {
-            ESP_LOGI(TAG, "📡 Qualidade: EXCELENTE 🟢");
+            ESP_LOGI(TAG, " Qualidade: EXCELENTE ");
         } else if (ap_info.rssi > -60) {
-            ESP_LOGI(TAG, "📡 Qualidade: BOA 🟡");
+            ESP_LOGI(TAG, " Qualidade: BOA ");
         } else if (ap_info.rssi > -70) {
-            ESP_LOGI(TAG, "📡 Qualidade: REGULAR 🟠");
+            ESP_LOGI(TAG, " Qualidade: REGULAR ");
         } else {
-            ESP_LOGI(TAG, "📡 Qualidade: FRACA 🔴");
+            ESP_LOGI(TAG, " Qualidade: FRACA ");
         }
     }
     
     // Informações de rede
-    ESP_LOGI(TAG, "🌐 IP do Cliente: " IPSTR, IP2STR(&client_ip));
-    ESP_LOGI(TAG, "🌐 Gateway (AP): " IPSTR, IP2STR(&gateway_ip));
+    ESP_LOGI(TAG, " IP do Cliente: " IPSTR, IP2STR(&client_ip));
+    ESP_LOGI(TAG, " Gateway (AP): " IPSTR, IP2STR(&gateway_ip));
     
     // Estatísticas de tráfego
-    ESP_LOGI(TAG, "📤 Mensagens enviadas: %d", messages_sent);
+    ESP_LOGI(TAG, " Mensagens enviadas: %d", messages_sent);
     ESP_LOGI(TAG, "📨 Mensagens recebidas: %d", messages_received);
-    ESP_LOGI(TAG, "📊 Taxa de sucesso: %.1f%%", 
+    ESP_LOGI(TAG, " Taxa de sucesso: %.1f%%", 
              messages_sent > 0 ? (float)messages_received / messages_sent * 100 : 0);
     
     // Status de conectividade
-    ESP_LOGI(TAG, "✅ Status: CONECTADO E FUNCIONANDO!");
-    ESP_LOGI(TAG, "✅ Tráfego TCP: ATIVO");
+    ESP_LOGI(TAG, " Status: CONECTADO E FUNCIONANDO!");
+    ESP_LOGI(TAG, " Tráfego TCP: ATIVO");
     ESP_LOGI(TAG, "===================================");
 }
 
@@ -187,11 +187,11 @@ void show_detailed_stats(void)
 void tcp_connectivity_test(void)
 {
     if (!is_connected) {
-        ESP_LOGW(TAG, "Não conectado - não é possível testar conectividade");
+        ESP_LOGI(TAG, "Não conectado - não é possível testar conectividade");
         return;
     }
 
-    ESP_LOGI(TAG, "🔍 Testando conectividade TCP com o AP...");
+    ESP_LOGI(TAG, " Testando conectividade TCP com o AP...");
     
     struct sockaddr_in dest_addr;
     dest_addr.sin_addr.s_addr = gateway_ip.addr;
@@ -200,7 +200,7 @@ void tcp_connectivity_test(void)
     
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock < 0) {
-        ESP_LOGE(TAG, "❌ Erro ao criar socket");
+        ESP_LOGE(TAG, " Erro ao criar socket");
         return;
     }
     
@@ -213,34 +213,34 @@ void tcp_connectivity_test(void)
     
     int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err != 0) {
-        ESP_LOGW(TAG, "⚠️ Conexão TCP falhou (normal se AP não tiver servidor HTTP)");
-        ESP_LOGI(TAG, "📡 Mas a rede está funcionando - IP obtido com sucesso!");
+        ESP_LOGI(TAG, " Conexão TCP falhou (normal se AP não tiver servidor HTTP)");
+        ESP_LOGI(TAG, " Mas a rede está funcionando - IP obtido com sucesso!");
     } else {
-        ESP_LOGI(TAG, "✅ Conectividade TCP OK!");
+        ESP_LOGI(TAG, " Conectividade TCP OK!");
     }
     
     close(sock);
-    ESP_LOGI(TAG, "🌐 Teste de conectividade concluído");
+    ESP_LOGI(TAG, " Teste de conectividade concluído");
 }
 
 // Função simplificada para testar conectividade básica
 void simple_connectivity_test(void)
 {
     if (!is_connected) {
-        ESP_LOGW(TAG, "Não conectado - não é possível testar conectividade");
+        ESP_LOGI(TAG, "Não conectado - não é possível testar conectividade");
         return;
     }
 
-    ESP_LOGI(TAG, "🔍 Verificando conectividade de rede...");
+    ESP_LOGI(TAG, " Verificando conectividade de rede...");
     
     // Verificar se temos IP válido
     if (client_ip.addr != 0 && gateway_ip.addr != 0) {
-        ESP_LOGI(TAG, "✅ Conectividade verificada:");
+        ESP_LOGI(TAG, " Conectividade verificada:");
         ESP_LOGI(TAG, "   - IP do cliente: " IPSTR, IP2STR(&client_ip));
         ESP_LOGI(TAG, "   - Gateway (AP): " IPSTR, IP2STR(&gateway_ip));
-        ESP_LOGI(TAG, "   - Status: Rede ativa e funcionando! 🌐");
+        ESP_LOGI(TAG, "   - Status: Rede ativa e funcionando! ");
     } else {
-        ESP_LOGW(TAG, "⚠️ Problema na configuração de rede");
+        ESP_LOGI(TAG, " Problema na configuração de rede");
     }
 }
 
@@ -249,14 +249,14 @@ void check_connection_status(void)
 {
     ESP_LOGI(TAG, "=== STATUS DA CONEXÃO ===");
     ESP_LOGI(TAG, "Modo Wi-Fi: Station (Cliente)");
-    ESP_LOGI(TAG, "Conectado: %s", is_connected ? "SIM ✅" : "NÃO ❌");
+    ESP_LOGI(TAG, "Conectado: %s", is_connected ? "SIM " : "NÃO ");
     
     if (is_connected) {
         show_detailed_stats();
         simple_connectivity_test();
     } else {
-        ESP_LOGI(TAG, "❌ Desconectado do AP");
-        ESP_LOGI(TAG, "🔄 Aguardando reconexão...");
+        ESP_LOGI(TAG, " Desconectado do AP");
+        ESP_LOGI(TAG, " Aguardando reconexão...");
     }
     ESP_LOGI(TAG, "==========================");
 }
@@ -320,18 +320,18 @@ static void tcp_client_task(void *pvParameters)
     char message[256];
     int msg_counter = 1;
     
-    ESP_LOGI(TAG, "🚀 Cliente TCP iniciado - aguardando conexão Wi-Fi...");
+    ESP_LOGI(TAG, " Cliente TCP iniciado - aguardando conexão Wi-Fi...");
     
     // Aguardar conexão Wi-Fi
     while (!is_connected) {
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
     
-    ESP_LOGI(TAG, "✅ Wi-Fi conectado! Iniciando tráfego TCP...");
+    ESP_LOGI(TAG, " Wi-Fi conectado! Iniciando tráfego TCP...");
     
     while (1) {
         if (!is_connected) {
-            ESP_LOGW(TAG, "⚠️ Wi-Fi desconectado - pausando tráfego TCP");
+            ESP_LOGI(TAG, " Wi-Fi desconectado - pausando tráfego TCP");
             vTaskDelay(pdMS_TO_TICKS(5000));
             continue;
         }
@@ -346,7 +346,7 @@ static void tcp_client_task(void *pvParameters)
         
         int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
         if (sock < 0) {
-            ESP_LOGE(TAG, "❌ Erro ao criar socket: errno %d", errno);
+            ESP_LOGE(TAG, " Erro ao criar socket: errno %d", errno);
             vTaskDelay(pdMS_TO_TICKS(next_interval));
             continue;
         }
@@ -360,7 +360,7 @@ static void tcp_client_task(void *pvParameters)
         
         int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
         if (err != 0) {
-            ESP_LOGE(TAG, "❌ Erro ao conectar socket: errno %d", errno);
+            ESP_LOGE(TAG, " Erro ao conectar socket: errno %d", errno);
             close(sock);
             vTaskDelay(pdMS_TO_TICKS(next_interval));
             continue;
@@ -371,18 +371,18 @@ static void tcp_client_task(void *pvParameters)
         
         int err_send = send(sock, message, strlen(message), 0);
         if (err_send < 0) {
-            ESP_LOGE(TAG, "❌ Erro ao enviar dados: errno %d", errno);
+            ESP_LOGE(TAG, " Erro ao enviar dados: errno %d", errno);
         } else {
             messages_sent++;
-            ESP_LOGI(TAG, "📤 Mensagem %d enviada (%d bytes): %s", 
+            ESP_LOGI(TAG, " Mensagem %d enviada (%d bytes): %s", 
                      msg_counter, err_send, message);
             
             // Receber resposta
             int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
             if (len < 0) {
-                ESP_LOGW(TAG, "⚠️ Erro ao receber resposta: errno %d", errno);
+                ESP_LOGI(TAG, " Erro ao receber resposta: errno %d", errno);
             } else if (len == 0) {
-                ESP_LOGW(TAG, "⚠️ Conexão fechada pelo servidor");
+                ESP_LOGI(TAG, " Conexão fechada pelo servidor");
             } else {
                 rx_buffer[len] = 0;
                 messages_received++;
@@ -406,7 +406,7 @@ static void tcp_client_task(void *pvParameters)
 void monitoring_task(void *pvParameters)
 {
     while (1) {
-        ESP_LOGI(TAG, "\n🔄 === VERIFICAÇÃO PERIÓDICA ===");
+        ESP_LOGI(TAG, "\n === VERIFICAÇÃO PERIÓDICA ===");
         check_connection_status();
         ESP_LOGI(TAG, "=== FIM DA VERIFICAÇÃO ===\n");
         
@@ -424,7 +424,7 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    ESP_LOGI(TAG, "🚀 Inicializando ESP32 como Cliente Wi-Fi...");
+    ESP_LOGI(TAG, " Inicializando ESP32 como Cliente Wi-Fi...");
     
     // Inicializar Wi-Fi no modo Station
     wifi_init_sta();

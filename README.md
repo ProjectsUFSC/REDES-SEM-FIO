@@ -163,11 +163,9 @@ ATAQUE BLOQUEADO - Blacklist confirmada
 
 **[INDICE_DOCUMENTACAO.md](INDICE_DOCUMENTACAO.md)** - Índice completo de toda a documentação
 
-### Documentação Acadêmica
-- **[README_ACADEMICO.md](README_ACADEMICO.md)** - Relatório acadêmico completo com análise científica dos ataques, metodologia de pesquisa, resultados experimentais e fundamentação teórica
-
 ### Documentação Técnica
 - **[DOCUMENTACAO_TECNICA.md](DOCUMENTACAO_TECNICA.md)** - Guia técnico completo com arquitetura do sistema, instruções de execução, troubleshooting e configurações avançadas
+
 - **[QUICK_START.md](QUICK_START.md)** - Guia de início rápido para demonstração em 5 minutos
 
 ### Documentação por Módulo:
@@ -330,13 +328,13 @@ Para dúvidas técnicas, consulte em ordem:
 
 ## 📄 Licença e Direitos
 
-### 📋 Licença de Uso
+###  Licença de Uso
 Este projeto é distribuído sob **Licença Educacional**:
-- ✅ **Uso acadêmico**: Permitido com atribuição
-- ✅ **Pesquisa**: Permitido com citação adequada
-- ✅ **Ensino**: Permitido em instituições educacionais
-- ❌ **Uso comercial**: Requer autorização expressa dos autores
-- ❌ **Distribuição modificada**: Sem autorização dos autores
+-  **Uso acadêmico**: Permitido com atribuição
+-  **Pesquisa**: Permitido com citação adequada
+-  **Ensino**: Permitido em instituições educacionais
+-  **Uso comercial**: Requer autorização expressa dos autores
+-  **Distribuição modificada**: Sem autorização dos autores
 
 ### 🏛️ Instituição Acadêmica
 - **Desenvolvido para**: Pesquisa em Cibersegurança
@@ -346,17 +344,17 @@ Este projeto é distribuído sob **Licença Educacional**:
 
 ## � Recursos e Referências
 
-### 📚 Documentação Técnica
+###  Documentação Técnica
 - **[ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf/en/latest/)**
 - **[IEEE 802.11 Standard](https://www.ieee802.org/11/)**
 - **[NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)**
 
-### 🔐 Segurança e Pesquisa
+###  Segurança e Pesquisa
 - **[OWASP IoT Security](https://owasp.org/www-project-internet-of-things/)**
 - **[WiFi Security Research](https://www.krackattacks.com/)**
 - **[CVE Database](https://cve.mitre.org/)**
 
-### 🛠️ Ferramentas Complementares
+###  Ferramentas Complementares
 - **[Wireshark](https://www.wireshark.org/)** - Análise de tráfego de rede
 - **[Aircrack-ng](https://www.aircrack-ng.org/)** - Suite de segurança WiFi
 - **[ESP32 DevKitC](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)** - Hardware de referência

